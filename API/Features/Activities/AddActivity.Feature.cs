@@ -25,13 +25,13 @@ public static class AddActivity
         {
             _serviceProvider = serviceProvider;
 
-            //RuleFor(_ => _.Name)
-            //    .NotEmpty()
-            //    .WithMessage("Name must have a value");
+            RuleFor(_ => _.Name)
+                .NotEmpty()
+                .WithMessage("Name must have a value");
 
-            //RuleFor(_ => _.Description)
-            //    .NotEmpty()
-            //    .WithMessage("Description must have a value");
+            RuleFor(_ => _.Description)
+                .NotEmpty()
+                .WithMessage("Description must have a value");
 
             RuleFor(_ => _.Duration)
                 .Must(d => d.IsValid())
