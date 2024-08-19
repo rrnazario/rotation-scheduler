@@ -1,0 +1,11 @@
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\bin\Debug\net8.0\Rotation.Domain.deps.json
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\bin\Debug\net8.0\Rotation.Domain.dll
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\bin\Debug\net8.0\Rotation.Domain.pdb
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\obj\Debug\net8.0\Rotation.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\obj\Debug\net8.0\Rotation.Domain.AssemblyInfoInputs.cache
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\obj\Debug\net8.0\Rotation.Domain.AssemblyInfo.cs
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\obj\Debug\net8.0\Rotation.Domain.csproj.CoreCompileInputs.cache
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\obj\Debug\net8.0\Rotation.Domain.dll
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\obj\Debug\net8.0\refint\Rotation.Domain.dll
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\obj\Debug\net8.0\Rotation.Domain.pdb
+C:\Users\rrnaz\source\repos\rotation\Rotation.Domain\obj\Debug\net8.0\ref\Rotation.Domain.dll
