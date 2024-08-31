@@ -4,7 +4,7 @@ using Rotation.Domain.Users;
 
 namespace Rotation.Application.Features.Activities;
 
-public class Activity: IActivity
+public class Activity : IActivity
 {
     public Activity(string name, string description, Duration duration)
     {
@@ -31,5 +31,17 @@ public class Activity: IActivity
         Users = Users.Concat([user]);
 
         return true;
+    }
+
+    public (IUser Main, IUser? Replacer) GetNextUsersOnRotation()
+    {
+        IUser? main = default, replacer = default;
+        foreach (var user in Users)
+        {
+            if (user.IsAvailable(Duration) && main is null)
+                main = user;
+        }
+        
+        throw new NotImplementedException();
     }
 }

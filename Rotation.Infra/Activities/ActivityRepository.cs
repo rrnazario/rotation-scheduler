@@ -15,6 +15,11 @@ internal class ActivityRepository
         return Task.FromResult(entity.Id);
     }
 
+    public Task<IEnumerable<IActivity>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(entities.AsEnumerable());
+    }
+
     public Task<IActivity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(entities.Find(a => a.Id == id));

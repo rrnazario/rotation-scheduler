@@ -11,4 +11,6 @@ public interface IActivity : IAggregation
     public IEnumerable<IUser> Users { get; }
 
     bool TryAddUser(IUser user);
+
+    (IUser Main, IUser? Replacer) GetNextUsersOnRotation();
 }

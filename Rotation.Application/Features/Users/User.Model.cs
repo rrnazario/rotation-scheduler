@@ -19,8 +19,7 @@ public class User : IUser
 
     public Guid Id {  get; private set; }
 
-    public void FillCalendar(DateTime? begin = null, Duration? duration = null)
-    {
-        Console.WriteLine("Calendar filled");
-    }
+    public void FillCalendar(ICalendar calendar) => Calendar = calendar;
+
+    public bool IsAvailable(Duration duration) => Calendar is null || Calendar.IsAvailable(duration);
 }

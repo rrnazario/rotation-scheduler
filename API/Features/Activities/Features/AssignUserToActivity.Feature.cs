@@ -60,13 +60,13 @@ public static class AssignUserToActivity
             var activity = await _activityRepository.GetByIdAsync(command.ActivityId, cancellationToken);
             if (activity is null)
             {
-                throw new EntityNotFoundException("Activity not found");
+                throw new EntityNotFoundException(nameof(activity));
             }
 
             var user = await _userRepository.GetByIdAsync(command.UserId, cancellationToken);
             if (user is null)
             {
-                throw new EntityNotFoundException("User not found");
+                throw new EntityNotFoundException(nameof(user));
             }
 
             var userAdded = activity.TryAddUser(user);

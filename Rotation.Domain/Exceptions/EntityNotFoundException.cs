@@ -2,6 +2,6 @@
 
 public class EntityNotFoundException : Exception
 {
-    public EntityNotFoundException(string message) 
-        : base(message) { }
+    public EntityNotFoundException(string entity) 
+        : base($"{entity} not found") { }
 }

@@ -9,5 +9,7 @@ public interface IUser : IAggregation
     string? Login { get; }
     ICalendar Calendar { get; }
 
-    void FillCalendar(DateTime? begin = null, Duration? duration = null);
+    void FillCalendar(ICalendar calendar);
+
+    bool IsAvailable(Duration date);
 }

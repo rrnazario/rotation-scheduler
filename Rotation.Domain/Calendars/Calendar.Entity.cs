@@ -5,11 +5,13 @@ namespace Rotation.Domain.Calendars;
 public interface ICalendar
     : IAggregation
 {
-    public int Id { get; }
-    public int UserId { get; }
-    public CalendarDay[] Days { get; }
+    public Guid UserId { get; }
 
-    void FillDays(DateTime? begin = null);
+    public IEnumerable<CalendarDay> Days { get; }
+
+    void FillDays(IEnumerable<CalendarDay> days);
+
+    bool IsAvailable(Duration duration);
 }
 
-public record CalendarDay(DateTime date, bool available);
+public record CalendarDay(DateTime Date, bool Available);
