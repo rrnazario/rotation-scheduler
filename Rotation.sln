@@ -5,11 +5,11 @@ VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotation.API", "API\Rotation.API.csproj", "{FE155740-147B-47A0-ACC7-95ED8C57E46B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{1691B031-9230-4911-AAE4-D953F6285E45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotation.Domain", "Rotation.Domain\Rotation.Domain.csproj", "{E5F4FBD8-38AE-4DAF-9A9B-381C998CF19F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rotation.Domain", "Rotation.Domain\Rotation.Domain.csproj", "{E5F4FBD8-38AE-4DAF-9A9B-381C998CF19F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotation.Infra", "Rotation.Infra\Rotation.Infra.csproj", "{7FA1ADC1-1E0D-45C5-817F-55F800CA691E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rotation.Infra", "Rotation.Infra\Rotation.Infra.csproj", "{7FA1ADC1-1E0D-45C5-817F-55F800CA691E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rotation.Application", "Rotation.Application\Rotation.Application.csproj", "{E5FA99E4-442D-443F-9E23-64959293BC49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,14 +29,13 @@ Global
 		{7FA1ADC1-1E0D-45C5-817F-55F800CA691E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FA1ADC1-1E0D-45C5-817F-55F800CA691E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FA1ADC1-1E0D-45C5-817F-55F800CA691E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5FA99E4-442D-443F-9E23-64959293BC49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5FA99E4-442D-443F-9E23-64959293BC49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5FA99E4-442D-443F-9E23-64959293BC49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5FA99E4-442D-443F-9E23-64959293BC49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{FE155740-147B-47A0-ACC7-95ED8C57E46B} = {1691B031-9230-4911-AAE4-D953F6285E45}
-		{E5F4FBD8-38AE-4DAF-9A9B-381C998CF19F} = {1691B031-9230-4911-AAE4-D953F6285E45}
-		{7FA1ADC1-1E0D-45C5-817F-55F800CA691E} = {1691B031-9230-4911-AAE4-D953F6285E45}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C2F87214-DB9E-4059-BB65-FF62B112B106}

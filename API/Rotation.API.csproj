@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Rotation.Application\Rotation.Application.csproj" />
     <ProjectReference Include="..\Rotation.Infra\Rotation.Infra.csproj" />
   </ItemGroup>
 
