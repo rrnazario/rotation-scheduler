@@ -43,9 +43,9 @@ public class GetAllUsersModule : ICarterModule
     => app
             .MapGet(
             UserConstants.Route,
-            async (ISender sender, GetAllUsersQuery query) =>
+            async (ISender sender) =>
             {
-                return await sender.Send(query);
+                return await sender.Send(new GetAllUsersQuery());
             })
            .IncludeInOpenApi()
            .Produces<GetUsersResponse>(StatusCodes.Status200OK);

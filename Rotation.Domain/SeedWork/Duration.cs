@@ -14,6 +14,25 @@ public class Duration
         Begin = CurrentBegin = begin;
     }
 
+    public DateTime[] GetCurrentInterval()
+    {
+        var result = new List<DateTime>();
+        
+        var end = DurationType switch
+        {
+            DurationType.Days => Amount,
+            DurationType.Weeks => Amount * 7,
+            _ => throw new NotImplementedException(),
+        };
+
+        for (var i = 0; i < end; i++)
+        {
+            result.Add(CurrentBegin.AddDays(i));
+        }
+
+        return result.ToArray();
+    }
+    
     public DateTime NextBegin()
     {
         var next = DurationType switch

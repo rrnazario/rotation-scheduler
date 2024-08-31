@@ -2,6 +2,7 @@
 using Carter.OpenApi;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Rotation.API.Features.Activities;
 using Rotation.Domain.Activities;
 using Rotation.Domain.Exceptions;
@@ -77,7 +78,7 @@ public class GetNextUserOnRotationModule : ICarterModule
     => app
             .MapGet(
             ActivityConstants.Route + "/rotation/{activityId}",
-            async (ISender sender, Guid activityId) =>
+            async (ISender sender, [FromQuery] Guid activityId) =>
             {
                 return await sender.Send(new GetNextUserOnRotationQuery(activityId));
             })

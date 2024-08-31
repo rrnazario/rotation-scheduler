@@ -12,7 +12,7 @@ public static class GetAllActivities
 {
     internal record GetAllActivitiesQuery
         : IRequest<GetAllActivitiesResponse>;
-    internal record GetAllActivitiesResponse(IEnumerable<IActivity> Users);
+    internal record GetAllActivitiesResponse(IEnumerable<IActivity> Activities);
 
     record Handler : IRequestHandler<GetAllActivitiesQuery, GetAllActivitiesResponse>
     {
@@ -43,9 +43,9 @@ public class GetAllActivitiesModule : ICarterModule
     => app
             .MapGet(
             ActivityConstants.Route,
-            async (ISender sender, GetAllActivitiesQuery query) =>
+            async (ISender sender) =>
             {
-                return await sender.Send(query);
+                return await sender.Send(new GetAllActivitiesQuery());
             })
            .IncludeInOpenApi()
            .Produces<GetAllActivitiesResponse>(StatusCodes.Status200OK);

@@ -21,8 +21,16 @@ public class Calendar
 
     public bool IsAvailable(Duration duration)
     {
-        var day = Days.FirstOrDefault(d => d.Date.Date == duration.CurrentBegin.Date);
+        var durationDays = duration.GetCurrentInterval(); //01/09 a 14/09
 
-        return day is null || day.Available;
+        foreach (var durationDay in durationDays)
+        {
+            var day = Days.FirstOrDefault(d => d.Date.Date == durationDay.Date);
+
+            if (day is not null && !day.Available)
+                return false;
+        }
+
+        return true;
     }
 }

@@ -23,7 +23,7 @@ public class Activity : IActivity
 
     public bool TryAddUser(IUser user)
     {
-        if (Users.Any(u => u.Name == user.Name))
+        if (Users.Any(u => u.Id == user.Id))
         {
             return false;
         }
@@ -36,12 +36,57 @@ public class Activity : IActivity
     public (IUser Main, IUser? Replacer) GetNextUsersOnRotation()
     {
         IUser? main = default, replacer = default;
+        var unavailableUsers = new List<IUser>();
         foreach (var user in Users)
         {
-            if (user.IsAvailable(Duration) && main is null)
-                main = user;
+            if (user.IsAvailable(Duration))
+            {
+                if (main is null)
+                {
+                    main = user;
+                    continue;
+                }
+
+                if (replacer is null)
+                {
+                    replacer = user; 
+                    continue;
+                }
+
+                break;
+            }
+
+            unavailableUsers.Add(user);
+            //se o usuario nao estiver disponivel, manter ele na ponta da lista
+            //se o usuario for escalado como MAIN, colocar ele no final da lista
         }
-        
-        throw new NotImplementedException();
+
+        MoveMainUserToEnd(main!);
+        MoveNotAvailableUsersTopList(unavailableUsers);
+
+        return (main!, replacer);
+    }
+
+    private void MoveMainUserToEnd(IUser user)
+    {
+        var currentUsers = Users.ToList();
+        currentUsers.Remove(user!);
+        currentUsers.Append(user!);
+
+        Users = currentUsers;
+    }
+
+    private void MoveNotAvailableUsersTopList(List<IUser> users)
+    {
+        var currentUsers = Users.ToList();
+        users.Reverse();
+
+        foreach (var user in users)
+        {
+            currentUsers.Remove(user!);
+            currentUsers.Insert(0, user!);
+        }
+
+        Users = currentUsers;
     }
 }
