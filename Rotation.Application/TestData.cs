@@ -9,5 +9,6 @@ public static class TestData
     {
         new User("Rogerson","rogim"),
         new User("Thuane","thuane"),
+        new User("Ronorgs","ronorgs"),
     };
 }

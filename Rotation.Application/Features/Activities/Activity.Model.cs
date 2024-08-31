@@ -71,13 +71,14 @@ public class Activity : IActivity
     {
         var currentUsers = Users.ToList();
         currentUsers.Remove(user!);
-        currentUsers.Append(user!);
 
-        Users = currentUsers;
+        Users = currentUsers.Append(user!);
     }
 
     private void MoveNotAvailableUsersTopList(List<IUser> users)
     {
+        if (!users.Any()) return;
+        
         var currentUsers = Users.ToList();
         users.Reverse();
 

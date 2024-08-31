@@ -2,7 +2,6 @@
 using Rotation.Application.Features.Calendar;
 using Rotation.Domain.Calendars;
 using Rotation.Domain.Users;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Rotation.Infra.Users;
 
@@ -14,7 +13,6 @@ internal class UserRepository
     {
         entities.Add(entity);
 
-
         return Task.FromResult(entity.Id);
     }
 
@@ -24,10 +22,10 @@ internal class UserRepository
         {
             var calendar = new Calendar(Guid.NewGuid(), entity.Id);
 
-            var begin = DateTime.UtcNow.AddDays(entities.IndexOf(entity) + 1);
+            var begin = DateTime.UtcNow.AddDays(entities.IndexOf(entity) - 1);
             var days = new List<CalendarDay>()
             {
-                new CalendarDay( begin, true),
+                new CalendarDay(begin, true),
                 new CalendarDay(begin.AddDays(1), true),
                 new CalendarDay(begin.AddDays(2), true),
                 new CalendarDay(begin.AddDays(3), false),
