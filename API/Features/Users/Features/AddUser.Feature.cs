@@ -6,19 +6,19 @@ using Rotation.Application.Features.Users;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 
-namespace Rotation.API.Features.Users;
+namespace Rotation.API.Features.Users.Features;
 
 public static class AddUser
 {
-    internal record Command(
-        string Name, 
-        string Login) 
-        : IRequest<Response>;
+    internal record AddUserCommand(
+        string Name,
+        string Login)
+        : IRequest<AddUserResponse>;
 
-    internal record Response(Guid Id);
+    internal record AddUserResponse(Guid Id);
 
     class Validator
-    : AbstractValidator<Command>
+    : AbstractValidator<AddUserCommand>
     {
         private readonly IServiceProvider _serviceProvider;
         public Validator(IServiceProvider serviceProvider)
@@ -36,7 +36,7 @@ public static class AddUser
         }
     }
 
-    record Handler : IRequestHandler<Command, Response>
+    record Handler : IRequestHandler<AddUserCommand, AddUserResponse>
     {
         private readonly IMediator _mediator;
         private readonly IUserRepository _repository;
@@ -52,12 +52,12 @@ public static class AddUser
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<AddUserResponse> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             var entity = new User(request.Name, request.Login);
 
             var newId = await _repository.AddAsync(entity, cancellationToken);
-            var response = new Response(newId);
+            var response = new AddUserResponse(newId);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -69,18 +69,18 @@ public static class AddUser
 }
 
 public class AddUserModule : ICarterModule
-{   
+{
     public void AddRoutes(IEndpointRouteBuilder app)
     => app
-            .MapPost<AddUser.Command>(
+            .MapPost<AddUser.AddUserCommand>(
             UserConstants.Route,
-            async (ISender sender, AddUser.Command command) =>
+            async (ISender sender, AddUser.AddUserCommand command) =>
             {
                 var response = await sender.Send(command);
 
                 return Results.Created(UserConstants.Route, response);
             })
            .IncludeInOpenApi()
-           .Produces<AddUser.Response>(StatusCodes.Status201Created)
+           .Produces<AddUser.AddUserResponse>(StatusCodes.Status201Created)
            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 }

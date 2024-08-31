@@ -6,20 +6,20 @@ using Rotation.Application.Features.Activities;
 using Rotation.Domain.Activities;
 using Rotation.Domain.SeedWork;
 
-namespace Rotation.API.Features.Activities;
+namespace Rotation.API.Features.Activities.Features;
 
 public static class AddActivity
 {
-    internal record Command(
-        string Name, 
-        string Description, 
-        Duration Duration) 
-        : IRequest<Response>;
+    internal record AddActivityCommand(
+        string Name,
+        string Description,
+        Duration Duration)
+        : IRequest<AddActivityResponse>;
 
-    internal record Response(Guid Id);
+    internal record AddActivityResponse(Guid Id);
 
     class Validator
-    : AbstractValidator<Command>
+    : AbstractValidator<AddActivityCommand>
     {
         private readonly IServiceProvider _serviceProvider;
         public Validator(IServiceProvider serviceProvider)
@@ -40,7 +40,7 @@ public static class AddActivity
         }
     }
 
-    record Handler : IRequestHandler<Command, Response>
+    record Handler : IRequestHandler<AddActivityCommand, AddActivityResponse>
     {
         private readonly IMediator _mediator;
         private readonly IActivityRepository _repository;
@@ -56,12 +56,12 @@ public static class AddActivity
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<AddActivityResponse> Handle(AddActivityCommand request, CancellationToken cancellationToken)
         {
             var activity = new Activity(request.Name, request.Description, request.Duration);
 
             var newId = await _repository.AddAsync(activity, cancellationToken);
-            var response = new Response(newId);
+            var response = new AddActivityResponse(newId);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -73,18 +73,18 @@ public static class AddActivity
 }
 
 public class AddActivityModule : ICarterModule
-{    
+{
     public void AddRoutes(IEndpointRouteBuilder app)
     => app
-            .MapPost<AddActivity.Command>(
+            .MapPost<AddActivity.AddActivityCommand>(
             ActivityConstants.Route,
-            async (ISender sender, AddActivity.Command command) =>
+            async (ISender sender, AddActivity.AddActivityCommand command) =>
             {
                 var response = await sender.Send(command);
 
                 return Results.Created(ActivityConstants.Route, response);
             })
            .IncludeInOpenApi()
-           .Produces<AddActivity.Response>(StatusCodes.Status201Created)
+           .Produces<AddActivity.AddActivityResponse>(StatusCodes.Status201Created)
            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 }

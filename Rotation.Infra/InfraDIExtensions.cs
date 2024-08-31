@@ -2,8 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Rotation.Domain.Activities;
 using Rotation.Domain.SeedWork;
+using Rotation.Domain.Users;
 using Rotation.Infra.Activities;
 using Rotation.Infra.Persistence;
+using Rotation.Infra.Users;
 
 namespace Rotation.Infra;
 
@@ -19,5 +21,6 @@ public static class InfraDIExtensions
     private static void RegisterRepositories(WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
     }
 }

@@ -7,18 +7,19 @@ using Rotation.Domain.Exceptions;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 using static Rotation.API.Features.Activities.ActivityExceptions;
+using static Rotation.API.Features.Activities.Features.AssignUserToActivity;
 
-namespace Rotation.API.Features.Activities;
+namespace Rotation.API.Features.Activities.Features;
 
 public static class AssignUserToActivity
 {
-    internal record Command(
+    internal record AssignUserToActivityCommand(
         Guid UserId,
         Guid ActivityId)
         : IRequest;
 
     class Validator
-    : AbstractValidator<Command>
+    : AbstractValidator<AssignUserToActivityCommand>
     {
         private readonly IServiceProvider _serviceProvider;
         public Validator(IServiceProvider serviceProvider)
@@ -35,7 +36,7 @@ public static class AssignUserToActivity
         }
     }
 
-    record Handler : IRequestHandler<Command>
+    record Handler : IRequestHandler<AssignUserToActivityCommand>
     {
         private readonly IMediator _mediator;
         private readonly IActivityRepository _activityRepository;
@@ -54,7 +55,7 @@ public static class AssignUserToActivity
             _userRepository = userRepository;
         }
 
-        public async Task Handle(Command command, CancellationToken cancellationToken)
+        public async Task Handle(AssignUserToActivityCommand command, CancellationToken cancellationToken)
         {
             var activity = await _activityRepository.GetByIdAsync(command.ActivityId, cancellationToken);
             if (activity is null)
@@ -86,13 +87,13 @@ public class AssignUserToActivityModule : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     => app
-            .MapPut<AddActivity.Command>(
+            .MapPut<AssignUserToActivityCommand>(
             $"{ActivityConstants.Route}/user",
-            async (ISender sender, AddActivity.Command command) =>
+            async (ISender sender, AssignUserToActivityCommand command) =>
             {
                 try
                 {
-                    var response = await sender.Send(command);
+                    await sender.Send(command);
                 }
                 catch (EntityNotFoundException e)
                 {
@@ -107,7 +108,7 @@ public class AssignUserToActivityModule : ICarterModule
                 return Results.NoContent();
             })
            .IncludeInOpenApi()
-           .Produces<AddActivity.Response>(StatusCodes.Status204NoContent)
+           .Produces(StatusCodes.Status204NoContent)
            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
            .ProducesProblem(StatusCodes.Status400BadRequest);
 }
