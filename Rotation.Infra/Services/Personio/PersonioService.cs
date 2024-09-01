@@ -22,7 +22,6 @@ public class PersonioService
         using var responseStream = await result.Content.ReadAsStreamAsync(cancellationToken);
         var personioResponse = await JsonSerializer.DeserializeAsync<PersonioResponse>(responseStream, cancellationToken: cancellationToken);
 
-
         return PersonioEmployeeResponse.Parse(personioResponse!);
     }
 }
