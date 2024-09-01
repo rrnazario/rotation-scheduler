@@ -20,9 +20,9 @@ public class PersonioService
         var result = await _httpClient.GetAsync($"company/employees?email={email}", cancellationToken);
 
         using var responseStream = await result.Content.ReadAsStreamAsync(cancellationToken);
-        var obj = await JsonSerializer.DeserializeAsync<PersonioEmployeeResponse>(responseStream, cancellationToken: cancellationToken);
+        var personioResponse = await JsonSerializer.DeserializeAsync<PersonioResponse>(responseStream, cancellationToken: cancellationToken);
 
 
-        throw new NotImplementedException();
+        return PersonioEmployeeResponse.Parse(personioResponse!);
     }
 }
