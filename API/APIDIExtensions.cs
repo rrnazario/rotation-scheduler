@@ -11,7 +11,7 @@ public static class APIDIExtensions
     /// <summary>
     /// Will register Carter, Swagger, APIVersioning and Mediator properly
     /// </summary>
-    public static void AddAplication(this WebApplicationBuilder builder)
+    public static void AddAPI(this WebApplicationBuilder builder)
     {
         builder.Services.AddSwaggerGen(options =>
         {
@@ -38,7 +38,7 @@ public static class APIDIExtensions
         });
     }
 
-    public static void UseApplication(this WebApplication app)
+    public static void UseAPI(this WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {

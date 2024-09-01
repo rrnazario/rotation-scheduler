@@ -1,8 +1,10 @@
 using API;
 using Rotation.Infra;
+using Rotation.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddAPI();
 builder.AddAplication();
 builder.AddInfrastructure();
 
@@ -12,6 +14,6 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.UseApplication();
+app.UseAPI();
 
 app.Run();
