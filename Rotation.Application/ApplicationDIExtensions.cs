@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Rotation.Application.Services.Personio;
-using Rotation.Application.Services.Slack;
+using Rotation.Infra.Services.Personio;
+using Rotation.Infra.Services.Slack;
 using System.Net.Http.Headers;
 
-namespace Rotation.Application;
+namespace Rotation.Infra;
 
 public static class ApplicationDIExtensions
 {
@@ -37,16 +37,4 @@ public static class ApplicationDIExtensions
     {
         
     }
-}
-
-record SlackSettings
-{
-    public string Token { get; set; }
-}
-
-record PersonioSettings
-{
-    public string Token { get; set; }
-    public string PartnerId { get; set; }
-    public string AppId { get; set; }
 }

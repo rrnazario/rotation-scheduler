@@ -1,7 +1,7 @@
 ﻿using Carter;
 using Carter.OpenApi;
 using MediatR;
-using Rotation.Application.Features.Users;
+using Rotation.Infra.Features.Users;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 using static Rotation.API.Features.Users.Features.GetAllUsers;

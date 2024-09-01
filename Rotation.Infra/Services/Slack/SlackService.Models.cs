@@ -1,4 +1,4 @@
-﻿namespace Rotation.Application.Services.Slack;
+﻿namespace Rotation.Infra.Services.Slack;
 
 public static class SlackServiceModels
 {

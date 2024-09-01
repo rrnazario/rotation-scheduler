@@ -1,7 +1,7 @@
-﻿using Rotation.Application.Features.Users;
+﻿using Rotation.Infra.Features.Users;
 using Rotation.Domain.Users;
 
-namespace Rotation.Application;
+namespace Rotation.Infra;
 
 public static class TestData
 {

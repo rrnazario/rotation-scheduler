@@ -1,4 +1,4 @@
-﻿namespace Rotation.Application.Services.Personio;
+﻿namespace Rotation.Infra.Services.Personio;
 
 public class PersonioService
     : IPersonioService

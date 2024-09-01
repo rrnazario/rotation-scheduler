@@ -1,7 +1,7 @@
 ﻿using Rotation.Domain.Calendars;
 using Rotation.Domain.SeedWork;
 
-namespace Rotation.Application.Features.Calendar;
+namespace Rotation.Infra.Features.Calendar;
 
 public class Calendar
     : ICalendar

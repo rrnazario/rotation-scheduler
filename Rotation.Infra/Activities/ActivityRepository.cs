@@ -1,4 +1,4 @@
-﻿using Rotation.Application.Features.Activities;
+﻿using Rotation.Infra.Features.Activities;
 using Rotation.Domain.Activities;
 using Rotation.Domain.SeedWork;
 

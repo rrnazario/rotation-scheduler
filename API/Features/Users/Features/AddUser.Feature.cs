@@ -2,7 +2,7 @@
 using Carter.OpenApi;
 using FluentValidation;
 using MediatR;
-using Rotation.Application.Features.Users;
+using Rotation.Infra.Features.Users;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 

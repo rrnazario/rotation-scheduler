@@ -1,6 +1,6 @@
 using API;
 using Rotation.Infra;
-using Rotation.Application;
+using Rotation.Infra;
 
 var builder = WebApplication.CreateBuilder(args);
 

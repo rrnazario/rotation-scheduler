@@ -1,6 +1,6 @@
-﻿using static Rotation.Application.Services.Slack.SlackServiceModels;
+﻿using static Rotation.Infra.Services.Slack.SlackServiceModels;
 
-namespace Rotation.Application.Services.Slack;
+namespace Rotation.Infra.Services.Slack;
 
 public interface ISlackService
 {

@@ -2,7 +2,7 @@
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 
-namespace Rotation.Application.Features.Users;
+namespace Rotation.Infra.Features.Users;
 
 public class User : IUser
 {

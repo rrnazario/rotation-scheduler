@@ -1,5 +1,5 @@
-﻿using Rotation.Application;
-using Rotation.Application.Features.Calendar;
+﻿using Rotation.Infra;
+using Rotation.Infra.Features.Calendar;
 using Rotation.Domain.Calendars;
 using Rotation.Domain.Users;
 
