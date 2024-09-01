@@ -12,7 +12,7 @@ public static class AddUser
 {
     internal record AddUserCommand(
         string Name,
-        string Login)
+        string Email)
         : IRequest<AddUserResponse>;
 
     internal record AddUserResponse(Guid Id);
@@ -29,9 +29,10 @@ public static class AddUser
                 .NotEmpty()
                 .WithMessage("Name must have a value");
 
-            RuleFor(_ => _.Login)
+            RuleFor(_ => _.Email)
                 .NotEmpty()
-                .WithMessage("Login must have a value");
+                .WithMessage("Email must have a value");
+                //.Must(e => e); // add email validation
 
         }
     }
@@ -54,7 +55,7 @@ public static class AddUser
 
         public async Task<AddUserResponse> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
-            var entity = new User(request.Name, request.Login);
+            var entity = new User(request.Name, request.Email);
 
             var newId = await _repository.AddAsync(entity, cancellationToken);
             var response = new AddUserResponse(newId);

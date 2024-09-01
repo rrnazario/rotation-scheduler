@@ -18,13 +18,13 @@ public class SlackService
     {
         var content = JsonSerializer.Serialize(msg);
 
-        var httpContent = new StringContent(
+        using var httpContent = new StringContent(
             content,
             Encoding.UTF8,
             "application/json"
         );
 
-        var messageResponse = await GetSlackResponseAsync(httpContent, cancellationToken);
+        var messageResponse = await SendMessageAsync(httpContent, cancellationToken);
 
         if (!messageResponse.ok)
         {
@@ -34,7 +34,7 @@ public class SlackService
         }
     }
 
-    private async Task<SlackMessageResponse> GetSlackResponseAsync(StringContent httpContent, CancellationToken cancellationToken)
+    private async Task<SlackMessageResponse> SendMessageAsync(StringContent httpContent, CancellationToken cancellationToken)
     {
         var response = await _client.PostAsync("chat.postMessage", httpContent, cancellationToken);
         using var responseJson = await response.Content.ReadAsStreamAsync();

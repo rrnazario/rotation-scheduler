@@ -6,7 +6,7 @@ namespace Rotation.Domain.Users;
 public interface IUser : IAggregation
 {
     string Name { get; }
-    string? Login { get; }
+    string? Email { get; }
     ICalendar Calendar { get; }
 
     void FillCalendar(ICalendar calendar);
