@@ -1,25 +1,26 @@
 using FluentAssertions;
-using static Rotation.Infra.Services.Personio.PersonioServiceModels;
+using static Rotation.Infra.Services.Personio.PersonioEmployeeModels;
+using static Rotation.Infra.Services.Personio.PersonioModels;
 
 namespace Rotation.Infra.Tests.Services;
 
-public class PersonioServiceTests
+public class PersonioServiceEmployeeTests
 {
     [Fact]
     public void PersonioEmployeeResponseParse_ShouldWork()
     {
-        var personioResponse = new PersonioResponse
+        var personioResponse = new PersonioResponse<PersonioEmployeeAttribute>
         {
             Success = true,
-            Data = new[]
-            {
-                new PersonioResponseData
+            Data =
+            [
+                new PersonioResponseData<PersonioEmployeeAttribute>
                 {
-                    Attributes = new Dictionary<string, PersonioResponseAttribute>
+                    Attributes = new Dictionary<string, PersonioEmployeeAttribute>
                     {
                         {
                             "id",
-                            new PersonioResponseAttribute
+                            new PersonioEmployeeAttribute
                             {
                                 Label = "ID",
                                 Type = "standard",
@@ -28,7 +29,7 @@ public class PersonioServiceTests
                         },
                         {
                             "email",
-                            new PersonioResponseAttribute
+                            new PersonioEmployeeAttribute
                             {
                                 Label = "email",
                                 Type = "standard",
@@ -37,7 +38,7 @@ public class PersonioServiceTests
                         },
                         {
                             "first_name",
-                            new PersonioResponseAttribute
+                            new PersonioEmployeeAttribute
                             {
                                 Label = "email",
                                 Type = "standard",
@@ -46,16 +47,16 @@ public class PersonioServiceTests
                         },
                         {
                             "last_name",
-                            new PersonioResponseAttribute
+                            new PersonioEmployeeAttribute
                             {
                                 Label = "email",
                                 Type = "standard",
                                 Value = "r@r.com"
-                            }
+                            }   
                         }
                     }
                 }
-            }
+            ]
         };
 
         var result = PersonioEmployeeResponse.Parse(personioResponse);

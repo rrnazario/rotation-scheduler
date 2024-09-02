@@ -1,27 +1,21 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
+using static Rotation.Infra.Services.Personio.PersonioModels;
 
 namespace Rotation.Infra.Services.Personio;
 
-public static class PersonioServiceModels
+/// <summary>
+/// Employee models for Personio
+/// </summary>
+public static class PersonioEmployeeModels
 {
-    public class PersonioResponse
-    {
-        public bool Success { get; set; }
-        public PersonioResponseData[] Data { get; set; }
-    }
-
-    public class PersonioResponseData
-    {
-        public Dictionary<string, PersonioResponseAttribute> Attributes { get; set; }
-    }
-
-    public class PersonioResponseAttribute
+    public class PersonioEmployeeAttribute
+    //: Dictionary<string, PersonioEmployeeField>;
     {
         public string Value { get; set; }
         public string Label { get; set; }
         public string Type { get; set; }
-        
+
         [JsonPropertyName("universal_id")]
         public string UniversalId { get; set; }
     }
@@ -33,11 +27,11 @@ public static class PersonioServiceModels
         public string LastName { get; set; }
         public string Email { get; set; }
 
-        public static PersonioEmployeeResponse Parse(PersonioResponse personioResponse)
+        public static PersonioEmployeeResponse Parse(PersonioResponse<PersonioEmployeeAttribute> personioResponse)
         {
             var type = typeof(PersonioEmployeeResponse);
             var ctor = type.GetConstructor(
-            BindingFlags.Instance | BindingFlags.Public, 
+            BindingFlags.Instance | BindingFlags.Public,
             null,
             CallingConventions.HasThis,
             [],
@@ -56,5 +50,4 @@ public static class PersonioServiceModels
             return instance;
         }
     }
-
 }
