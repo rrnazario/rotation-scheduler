@@ -1,5 +1,5 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using SlackNet;
+using SlackNet.WebApi;
 using static Rotation.Infra.Services.Slack.SlackServiceModels;
 
 namespace Rotation.Infra.Services.Slack;
@@ -7,39 +7,20 @@ namespace Rotation.Infra.Services.Slack;
 public class SlackService
     : ISlackService
 {
-    private readonly HttpClient _client;
+    private readonly ISlackApiClient _slack;
 
-    public SlackService(HttpClient client)
+    public SlackService(ISlackApiClient slack)
     {
-        _client = client;
+        _slack = slack;
     }
 
     public async Task SendMessageAsync(SlackMessage msg, CancellationToken cancellationToken)
     {
-        var content = JsonSerializer.Serialize(msg);
-
-        using var httpContent = new StringContent(
-            content,
-            Encoding.UTF8,
-            "application/json"
-        );
-
-        var messageResponse = await SendMessageAsync(httpContent, cancellationToken);
-
-        if (!messageResponse.ok)
-        {
-            throw new Exception(
-                "failed to send message. error: " + messageResponse.error
-            );
-        }
-    }
-
-    private async Task<SlackMessageResponse> SendMessageAsync(StringContent httpContent, CancellationToken cancellationToken)
-    {
-        var response = await _client.PostAsync("chat.postMessage", httpContent, cancellationToken);
-        using var responseJson = await response.Content.ReadAsStreamAsync();
-
-        return await JsonSerializer.DeserializeAsync<SlackMessageResponse>(responseJson, cancellationToken: cancellationToken);
+        await _slack.Chat.PostMessage(new Message() 
+        { 
+            Text = msg.Text, 
+            Channel = msg.Channel
+        }, cancellationToken);
     }
 }
 

@@ -10,6 +10,9 @@ using Rotation.Infra.Activities;
 using Rotation.Infra.Persistence;
 using Rotation.Infra.Users;
 using System.Net.Http.Headers;
+using SlackNet.AspNetCore;
+using SlackNet.Events;
+using Microsoft.Extensions.Configuration;
 
 namespace Rotation.Infra;
 
@@ -33,13 +36,9 @@ public static class InfraDIExtensions
 
     private static void RegisterHttpClients(WebApplicationBuilder builder)
     {
-        builder.Services.AddHttpClient<ISlackService>((sp, client) =>
-        {
-            var settings = sp.GetRequiredService<IOptions<SlackSettings>>().Value;
+        var settings = builder.Configuration.GetSection("Slack").Get<SlackSettings>()!;
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings.Token);
-            client.BaseAddress = new Uri("https://slack.com/api");
-        });
+        builder.Services.AddSlackNet(c => c.UseApiToken(settings.Token));
 
         builder.Services.AddHttpClient<IPersonioService>((sp, client) =>
         {

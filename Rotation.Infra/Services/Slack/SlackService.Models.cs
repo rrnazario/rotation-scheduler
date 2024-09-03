@@ -13,10 +13,8 @@ public static class SlackServiceModels
     // a slack message
     public class SlackMessage
     {
-        public string channel { get; set; }
-        public string text { get; set; }
-        public bool as_user { get; set; }
-        public SlackAttachment[] attachments { get; set; }
+        public string Channel { get; set; }
+        public string Text { get; set; }
     }
 
     // a slack message attachment
