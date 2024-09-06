@@ -19,18 +19,18 @@ public class Calendar
 
     public void FillDays(IEnumerable<CalendarDay> days) => Days = days;
 
-    public bool IsAvailable(Duration duration)
+    public CalendarAvailability GetAvailability(Duration duration)
     {
+        var result = new Dictionary<DateTime, bool>();
         var durationDays = duration.GetCurrentInterval(); //01/09 a 14/09
 
         foreach (var durationDay in durationDays)
         {
             var day = Days.FirstOrDefault(d => d.Date.Date == durationDay.Date);
 
-            if (day is not null && !day.Available)
-                return false;
+            result.Add(durationDay.Date, day is { Available: true });
         }
 
-        return true;
+        return new CalendarAvailability(result);
     }
 }

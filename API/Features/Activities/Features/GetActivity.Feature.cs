@@ -16,12 +16,10 @@ namespace Rotation.API.Features.Users.Features;
 
 public static class GetNextUserOnRotation
 {
-    internal record GetNextUserOnRotationQuery(Guid ActivityId)
-        : IRequest<GetNextUserOnRotationResponse>;
-    internal record GetNextUserOnRotationResponse(IUser MainUser, IUser? Replacer);
-
+    internal record GetActivityQuery(Guid ActivityId)
+        : IRequest<ActivityResume>;
     class Validator
-    : AbstractValidator<GetNextUserOnRotationQuery>
+    : AbstractValidator<GetActivityQuery>
     {
         private readonly IServiceProvider _serviceProvider;
         public Validator(IServiceProvider serviceProvider)
@@ -34,7 +32,7 @@ public static class GetNextUserOnRotation
         }
     }
 
-    record Handler : IRequestHandler<GetNextUserOnRotationQuery, GetNextUserOnRotationResponse>
+    record Handler : IRequestHandler<GetActivityQuery, ActivityResume>
     {
         private readonly IMediator _mediator;
         private readonly IActivityRepository _repository;
@@ -53,7 +51,7 @@ public static class GetNextUserOnRotation
             _userRepository = userRepository;
         }
 
-        public async Task<GetNextUserOnRotationResponse> Handle(GetNextUserOnRotationQuery request, CancellationToken cancellationToken)
+        public async Task<ActivityResume> Handle(GetActivityQuery request, CancellationToken cancellationToken)
         {
             var activity = await _repository.GetByIdAsync(request.ActivityId, cancellationToken);
             if (activity is null)
@@ -67,21 +65,20 @@ public static class GetNextUserOnRotation
                 activity.TryAddUser(user);
             }
 
-            var result = activity.GetNextUsersOnRotation();
-            return new(result.Main, result.Replacer);
+            return activity.GetActivityResume();
         }
     }
 }
 
-public class GetNextUserOnRotationModule : ICarterModule
+public class GetActivityModule : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     => app
             .MapGet(
-            ActivityConstants.Route + "/rotation/{activityId}",
+            ActivityConstants.Route + "/{activityId}",
             async (ISender sender, Guid activityId) 
-               => await sender.Send(new GetNextUserOnRotationQuery(activityId)))
+               => await sender.Send(new GetActivityQuery(activityId)))
            .IncludeInOpenApi()
-           .Produces<GetNextUserOnRotationResponse>(StatusCodes.Status200OK)
+           .Produces<ActivityResume>()
            .ProducesProblem(StatusCodes.Status400BadRequest);
 }
