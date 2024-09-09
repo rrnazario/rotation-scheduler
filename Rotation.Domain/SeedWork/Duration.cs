@@ -1,10 +1,10 @@
 ﻿namespace Rotation.Domain.SeedWork;
 
-public class Duration
+public record Duration
 {
-    public DurationType DurationType { get; private set; }
-    public int Amount { get; private set; }
-    public DateTime Begin { get; private set; }
+    public DurationType DurationType { get; }
+    public int Amount { get; }
+    public DateTime Begin { get; }
     public DateTime CurrentBegin { get; private set; }
 
     public Duration(int amount, DurationType durationType, DateTime begin)
@@ -33,21 +33,12 @@ public class Duration
         return result.ToArray();
     }
     
-    public DateTime NextBegin()
+    public void SetNextBegin()
     {
-        var next = DurationType switch
-        {
-            DurationType.Days => CurrentBegin.AddDays(Amount),
-            DurationType.Weeks => CurrentBegin.AddDays(Amount * 7),
-            _ => throw new NotImplementedException(),
-        };
+        var next = CurrentEnd();
 
         CurrentBegin = next;
-
-        return next;
     }
-
-    
 
     public bool IsValid()
     {
@@ -57,6 +48,13 @@ public class Duration
 
         return true;
     }
+    
+    public DateTime CurrentEnd() => DurationType switch
+    {
+        DurationType.Days => CurrentBegin.AddDays(Amount),
+        DurationType.Weeks => CurrentBegin.AddDays(Amount * 7),
+        _ => throw new NotImplementedException(),
+    };
 }
 
 public enum DurationType

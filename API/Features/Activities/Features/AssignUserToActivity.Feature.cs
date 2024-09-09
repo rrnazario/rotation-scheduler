@@ -7,55 +7,55 @@ using Rotation.Domain.Exceptions;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 using static Rotation.API.Features.Activities.ActivityExceptions;
-using static Rotation.API.Features.Activities.Features.AssignUserToActivity;
+using static Rotation.API.Features.Activities.Features.AssignUsersToActivity;
 
 namespace Rotation.API.Features.Activities.Features;
 
-public static class AssignUserToActivity
+public static class AssignUsersToActivity
 {
-    internal record AssignUserToActivityCommand(
-        Guid UserId,
-        Guid ActivityId)
+    internal record AssignUsersToActivityCommand(
+        Guid ActivityId,
+        string[] UserEmails)
         : IRequest;
 
     class Validator
-    : AbstractValidator<AssignUserToActivityCommand>
+    : AbstractValidator<AssignUsersToActivityCommand>
     {
         private readonly IServiceProvider _serviceProvider;
         public Validator(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
 
-            RuleFor(_ => _.UserId)
+            RuleFor(_ => _.UserEmails)
                 .NotEmpty()
-                .WithMessage("Name must have a value");
+                .WithMessage("UserEmails must have a value");
 
             RuleFor(_ => _.ActivityId)
                 .NotEmpty()
-                .WithMessage("Description must have a value");
+                .WithMessage("ActivityId must have a value");
         }
     }
 
-    record Handler : IRequestHandler<AssignUserToActivityCommand>
+    record Handler : IRequestHandler<AssignUsersToActivityCommand>
     {
-        private readonly IMediator _mediator;
+        private readonly ILogger<Handler> _logger;
         private readonly IActivityRepository _activityRepository;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public Handler(
-            IMediator metiator,
             IActivityRepository repository,
             IUnitOfWork unitOfWork,
-            IUserRepository userRepository)
+            IUserRepository userRepository, 
+            ILogger<Handler> logger)
         {
-            _mediator = metiator;
             _activityRepository = repository;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
+            _logger = logger;
         }
 
-        public async Task Handle(AssignUserToActivityCommand command, CancellationToken cancellationToken)
+        public async Task Handle(AssignUsersToActivityCommand command, CancellationToken cancellationToken)
         {
             var activity = await _activityRepository.GetByIdAsync(command.ActivityId, cancellationToken);
             if (activity is null)
@@ -63,17 +63,20 @@ public static class AssignUserToActivity
                 throw new EntityNotFoundException(nameof(activity));
             }
 
-            var user = await _userRepository.GetByIdAsync(command.UserId, cancellationToken);
-            if (user is null)
+            var users = await _userRepository.GetByEmailsAsync(command.UserEmails, cancellationToken);
+            if (users is null || !users.Any())
             {
-                throw new EntityNotFoundException(nameof(user));
+                throw new EntityNotFoundException(nameof(users));
             }
 
-            var userAdded = activity.TryAddUser(user);
-
-            if (!userAdded)
+            foreach (var user in users)
             {
-                throw new UserAlreadyAddedException(command.UserId, command.ActivityId);
+                var userAdded = activity.TryAddUser(user);
+
+                if (!userAdded)
+                {
+                    _logger.LogWarning("User {email} already added to activity {activity}.", user.Email, activity.Name);
+                }
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -87,9 +90,9 @@ public class AssignUserToActivityModule : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     => app
-            .MapPut<AssignUserToActivityCommand>(
+            .MapPut<AssignUsersToActivityCommand>(
             $"{ActivityConstants.Route}/user",
-            async (ISender sender, AssignUserToActivityCommand command) =>
+            async (ISender sender, AssignUsersToActivityCommand command) =>
             {
                 try
                 {

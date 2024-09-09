@@ -11,7 +11,12 @@ public interface ICalendar
 
     void FillDays(IEnumerable<CalendarDay> days);
 
-    bool IsAvailable(Duration duration);
+    CalendarAvailability GetAvailability(Duration duration);
 }
 
 public record CalendarDay(DateTime Date, bool Available);
+
+public record CalendarAvailability(Dictionary<DateTime, bool> Availability)
+{
+    public int AvailabilityPercentage => Availability.Values.Count(v => v) * 100 / Availability.Count;
+}

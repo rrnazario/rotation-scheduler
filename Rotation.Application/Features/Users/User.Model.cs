@@ -21,5 +21,5 @@ public class User : IUser
 
     public void FillCalendar(ICalendar calendar) => Calendar = calendar;
 
-    public bool IsAvailable(Duration duration) => Calendar is null || Calendar.IsAvailable(duration);
+    public CalendarAvailability GetAvailability(Duration duration) => Calendar.GetAvailability(duration);
 }

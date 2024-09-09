@@ -6,10 +6,10 @@ namespace Rotation.Domain.Users;
 public interface IUser : IAggregation
 {
     string Name { get; }
-    string? Email { get; }
+    string Email { get; }
     ICalendar Calendar { get; }
 
     void FillCalendar(ICalendar calendar);
 
-    bool IsAvailable(Duration date);
+    CalendarAvailability GetAvailability(Duration date);
 }

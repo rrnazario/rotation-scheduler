@@ -33,13 +33,16 @@ public class Activity : IActivity
         return true;
     }
 
-    public (IUser Main, IUser? Replacer) GetNextUsersOnRotation()
+    public ActivityResume GetActivityResume()
     {
         IUser? main = default, replacer = default;
         var unavailableUsers = new List<IUser>();
         foreach (var user in Users)
         {
-            if (user.IsAvailable(Duration))
+            var availability = user.GetAvailability(Duration);
+            var availabilityPercentage = availability.AvailabilityPercentage;
+            
+            if (availabilityPercentage > 50)
             {
                 if (main is null)
                 {
@@ -57,14 +60,20 @@ public class Activity : IActivity
             }
 
             unavailableUsers.Add(user);
-            //se o usuario nao estiver disponivel, manter ele na ponta da lista
-            //se o usuario for escalado como MAIN, colocar ele no final da lista
         }
 
-        MoveMainUserToEnd(main!);
-        MoveNotAvailableUsersTopList(unavailableUsers);
+        
 
-        return (main!, replacer);
+        return new ActivityResume(main, replacer, Duration.CurrentBegin, Duration.CurrentEnd(), Name, unavailableUsers.ToArray());
+    }
+
+    public void Rotate()
+    {
+        var resume = GetActivityResume();
+
+        MoveMainUserToEnd(resume.Main);
+        MoveNotAvailableUsersTopList(resume.UnavailableUsers.ToList());
+        Duration.SetNextBegin();
     }
 
     private void MoveMainUserToEnd(IUser user)
@@ -91,3 +100,5 @@ public class Activity : IActivity
         Users = currentUsers;
     }
 }
+
+

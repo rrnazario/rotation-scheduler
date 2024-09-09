@@ -4,7 +4,7 @@ public static class ActivityExceptions
 {
     public class UserAlreadyAddedException : Exception
     {
-        public UserAlreadyAddedException(Guid userId, Guid activityId)
-            : base($"User {userId} already added to Activity {activityId}") { }
+        public UserAlreadyAddedException(string userEmail, Guid activityId)
+            : base($"User {userEmail} already added to Activity {activityId}") { }
     }
 }

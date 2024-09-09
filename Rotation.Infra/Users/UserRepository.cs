@@ -41,6 +41,11 @@ internal class UserRepository
         return Task.FromResult(entities.AsEnumerable());
     }
 
+    public Task<IUser[]?> GetByEmailsAsync(string[] userEmails, CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(entities.Where(a => userEmails.Contains(a.Email)).ToArray());
+    }
+
     public Task<IUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(entities.Find(a => a.Id == id));
