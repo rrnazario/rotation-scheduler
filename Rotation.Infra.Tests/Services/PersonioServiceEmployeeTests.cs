@@ -1,6 +1,6 @@
 using FluentAssertions;
-using static Rotation.Infra.Services.Personio.PersonioEmployeeModels;
-using static Rotation.Infra.Services.Personio.PersonioModels;
+using static Rotation.Infra.Services.Personio.Models.PersonioEmployeeModels;
+using static Rotation.Infra.Services.Personio.Models.PersonioModels;
 
 namespace Rotation.Infra.Tests.Services;
 

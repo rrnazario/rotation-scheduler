@@ -1,10 +1,10 @@
-﻿using Asp.Versioning;
+﻿using System.Reflection;
+using Asp.Versioning;
 using Carter;
 using Carter.OpenApi;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 
-namespace API;
+namespace Rotation.API;
 
 public static class APIDIExtensions
 {

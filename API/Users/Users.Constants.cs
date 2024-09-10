@@ -1,4 +1,4 @@
-﻿namespace Rotation.API.Features.Users;
+﻿namespace Rotation.API.Users;
 
 public static class UserConstants
 {

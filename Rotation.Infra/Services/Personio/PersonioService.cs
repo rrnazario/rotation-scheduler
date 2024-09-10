@@ -1,8 +1,8 @@
 ﻿
 using System.Text.Json;
-using static Rotation.Infra.Services.Personio.PersonioEmployeeModels;
-using static Rotation.Infra.Services.Personio.PersonioModels;
-using static Rotation.Infra.Services.Personio.PersonioTimeOffModels;
+using static Rotation.Infra.Services.Personio.Models.PersonioEmployeeModels;
+using static Rotation.Infra.Services.Personio.Models.PersonioModels;
+using static Rotation.Infra.Services.Personio.Models.PersonioTimeOffModels;
 
 namespace Rotation.Infra.Services.Personio;
 

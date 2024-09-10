@@ -1,9 +1,7 @@
 ﻿using System.Reflection;
-using System.Text.Json.Serialization;
-using static Rotation.Infra.Services.Personio.PersonioEmployeeModels;
-using static Rotation.Infra.Services.Personio.PersonioModels;
+using static Rotation.Infra.Services.Personio.Models.PersonioModels;
 
-namespace Rotation.Infra.Services.Personio;
+namespace Rotation.Infra.Services.Personio.Models;
 
 public static class PersonioTimeOffModels
 {

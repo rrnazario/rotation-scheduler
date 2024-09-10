@@ -6,15 +6,15 @@ using Rotation.Domain.Activities;
 using Rotation.Domain.Exceptions;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
-using static Rotation.API.Features.Activities.ActivityExceptions;
-using static Rotation.API.Features.Activities.Features.AssignUsersToActivity;
+using static Rotation.API.Activities.ActivityExceptions;
+using static Rotation.API.Activities.Features.AssignUsersToActivity;
 
-namespace Rotation.API.Features.Activities.Features;
+namespace Rotation.API.Activities.Features;
 
 public static class AssignUsersToActivity
 {
     internal record AssignUsersToActivityCommand(
-        Guid ActivityId,
+        int ActivityId,
         string[] UserEmails)
         : IRequest;
 

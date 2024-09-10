@@ -1,5 +1,5 @@
-﻿using Rotation.Infra;
-using Rotation.Infra.Features.Calendar;
+﻿using Rotation.Application;
+using Rotation.Application.Features.Calendar;
 using Rotation.Domain.Calendars;
 using Rotation.Domain.Users;
 
@@ -9,7 +9,7 @@ internal class UserRepository
     : IUserRepository
 {
     private static readonly List<IUser> entities = TestData.Users;
-    public Task<Guid> AddAsync(IUser entity, CancellationToken cancellationToken = default)
+    public Task<int> AddAsync(IUser entity, CancellationToken cancellationToken = default)
     {
         entities.Add(entity);
 
@@ -20,7 +20,7 @@ internal class UserRepository
     {
         foreach (var entity in entities)
         {
-            var calendar = new Calendar(Guid.NewGuid(), entity.Id);
+            var calendar = new Calendar(Random.Shared.Next(), entity.Id);
 
             var begin = DateTime.UtcNow.AddDays(entities.IndexOf(entity) - 1);
             var days = new List<CalendarDay>()
@@ -46,7 +46,7 @@ internal class UserRepository
         return Task.FromResult(entities.Where(a => userEmails.Contains(a.Email)).ToArray());
     }
 
-    public Task<IUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<IUser?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(entities.Find(a => a.Id == id));
     }

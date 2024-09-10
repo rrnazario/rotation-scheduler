@@ -2,11 +2,11 @@
 using Carter.OpenApi;
 using FluentValidation;
 using MediatR;
-using Rotation.Infra.Features.Activities;
+using Rotation.Application.Features.Activities;
 using Rotation.Domain.Activities;
 using Rotation.Domain.SeedWork;
 
-namespace Rotation.API.Features.Activities.Features;
+namespace Rotation.API.Activities.Features;
 
 public static class AddActivity
 {
@@ -16,7 +16,7 @@ public static class AddActivity
         Duration Duration)
         : IRequest<AddActivityResponse>;
 
-    internal record AddActivityResponse(Guid Id);
+    internal record AddActivityResponse(int Id);
 
     class Validator
     : AbstractValidator<AddActivityCommand>

@@ -1,4 +1,4 @@
-﻿namespace Rotation.Infra.Services.Personio;
+﻿namespace Rotation.Infra.Services.Personio.Models;
 
 /// <summary>
 /// General models for Personio

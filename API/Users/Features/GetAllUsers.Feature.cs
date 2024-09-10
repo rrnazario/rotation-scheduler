@@ -1,12 +1,11 @@
 ﻿using Carter;
 using Carter.OpenApi;
 using MediatR;
-using Rotation.Infra.Features.Users;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
-using static Rotation.API.Features.Users.Features.GetAllUsers;
+using static Rotation.API.Users.Features.GetAllUsers;
 
-namespace Rotation.API.Features.Users.Features;
+namespace Rotation.API.Users.Features;
 
 public static class GetAllUsers
 {

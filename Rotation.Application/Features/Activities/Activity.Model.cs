@@ -2,7 +2,7 @@
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 
-namespace Rotation.Infra.Features.Activities;
+namespace Rotation.Application.Features.Activities;
 
 public class Activity : IActivity
 {
@@ -11,7 +11,7 @@ public class Activity : IActivity
         Name = name;
         Description = description;
         Duration = duration;
-        Id = Guid.NewGuid();
+        Id = 5;
     }
 
     public string Name { get; private set; }
@@ -19,7 +19,7 @@ public class Activity : IActivity
     public Duration Duration { get; private set; }
     public IEnumerable<IUser> Users { get; private set; } = [];
 
-    public Guid Id {  get; private set; }
+    public int Id {  get; private set; }
 
     public bool TryAddUser(IUser user)
     {
@@ -61,8 +61,6 @@ public class Activity : IActivity
 
             unavailableUsers.Add(user);
         }
-
-        
 
         return new ActivityResume(main, replacer, Duration.CurrentBegin, Duration.CurrentEnd(), Name, unavailableUsers.ToArray());
     }
