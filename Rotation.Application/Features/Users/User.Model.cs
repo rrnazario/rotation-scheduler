@@ -2,7 +2,7 @@
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 
-namespace Rotation.Infra.Features.Users;
+namespace Rotation.Application.Features.Users;
 
 public class User : IUser
 {
@@ -10,14 +10,13 @@ public class User : IUser
     {
         Name = name;
         Email = email;
-        Id = Guid.NewGuid();
+        Id = 1;
     }
 
     public string Name { get; private set; }
     public string Email { get; private set; }
     public ICalendar Calendar { get; private set; }
-
-    public Guid Id {  get; private set; }
+    public int Id {  get; private set; }
 
     public void FillCalendar(ICalendar calendar) => Calendar = calendar;
 

@@ -1,4 +1,4 @@
-﻿namespace Rotation.API.Features.Activities;
+﻿namespace Rotation.API.Activities;
 
 public static class ActivityExceptions
 {

@@ -2,11 +2,11 @@
 using Carter.OpenApi;
 using FluentValidation;
 using MediatR;
-using Rotation.Infra.Features.Users;
+using Rotation.Application.Features.Users;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 
-namespace Rotation.API.Features.Users.Features;
+namespace Rotation.API.Users.Features;
 
 public static class AddUser
 {
@@ -15,7 +15,7 @@ public static class AddUser
         string Email)
         : IRequest<AddUserResponse>;
 
-    internal record AddUserResponse(Guid Id);
+    internal record AddUserResponse(int Id);
 
     class Validator
     : AbstractValidator<AddUserCommand>

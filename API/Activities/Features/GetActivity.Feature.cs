@@ -2,21 +2,17 @@
 using Carter.OpenApi;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Rotation.API.Features.Activities;
 using Rotation.Domain.Activities;
 using Rotation.Domain.Exceptions;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
-using System.Diagnostics;
-using static Rotation.API.Features.Users.Features.GetNextUserOnRotation;
+using static Rotation.API.Activities.Features.GetNextUserOnRotation;
 
-namespace Rotation.API.Features.Users.Features;
+namespace Rotation.API.Activities.Features;
 
 public static class GetNextUserOnRotation
 {
-    internal record GetActivityQuery(Guid ActivityId)
+    internal record GetActivityQuery(int ActivityId)
         : IRequest<ActivityResume>;
     class Validator
     : AbstractValidator<GetActivityQuery>
@@ -76,7 +72,7 @@ public class GetActivityModule : ICarterModule
     => app
             .MapGet(
             ActivityConstants.Route + "/{activityId}",
-            async (ISender sender, Guid activityId) 
+            async (ISender sender, int activityId) 
                => await sender.Send(new GetActivityQuery(activityId)))
            .IncludeInOpenApi()
            .Produces<ActivityResume>()

@@ -1,4 +1,4 @@
-﻿namespace Rotation.Infra.Services.Personio;
+﻿namespace Rotation.Infra.Services.Personio.Models;
 
 /// <summary>
 /// General models for Personio
@@ -19,5 +19,4 @@ public static class PersonioModels
         public Dictionary<string, TAttribute> Attributes { get; set; }
         //public TAttribute Attribute { get; set; }
     }
-
 }

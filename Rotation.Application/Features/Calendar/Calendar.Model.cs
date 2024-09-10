@@ -1,15 +1,15 @@
 ﻿using Rotation.Domain.Calendars;
 using Rotation.Domain.SeedWork;
 
-namespace Rotation.Infra.Features.Calendar;
+namespace Rotation.Application.Features.Calendar;
 
 public class Calendar
     : ICalendar
 {
-    public Guid Id { get; }
-    public Guid UserId { get; }
+    public int Id { get; }
+    public int UserId { get; }
 
-    public Calendar(Guid id, Guid userId)
+    public Calendar(int id, int userId)
     {
         Id = id;
         UserId = userId;

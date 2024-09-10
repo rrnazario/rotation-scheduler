@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Rotation.Infra.Services.Personio;
 using Rotation.Infra.Services.Slack;
 using Rotation.Domain.Activities;
@@ -9,9 +8,8 @@ using Rotation.Domain.Users;
 using Rotation.Infra.Activities;
 using Rotation.Infra.Persistence;
 using Rotation.Infra.Users;
-using System.Net.Http.Headers;
 using SlackNet.AspNetCore;
-using SlackNet.Events;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 
 namespace Rotation.Infra;
@@ -22,7 +20,11 @@ public static class InfraDIExtensions
     {
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         builder.Services.AddScoped<ISlackService, SlackService>();
-        builder.Services.AddScoped<IPersonioService, PersonioService>();
+        builder.Services.AddSingleton<IPersonioTokenHandler, PersonioTokenHandler>();
+        var personioSettings = builder.Configuration.GetSection("Personio").Get<PersonioSettings>()!;
+        builder.Services.AddSingleton(personioSettings);
+
+        builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         RegisterRepositories(builder);
         RegisterHttpClients(builder);
@@ -36,31 +38,24 @@ public static class InfraDIExtensions
 
     private static void RegisterHttpClients(WebApplicationBuilder builder)
     {
-        var settings = builder.Configuration.GetSection("Slack").Get<SlackSettings>()!;
+        var slackSettings = builder.Configuration.GetSection("Slack").Get<SlackSettings>()!;
 
-        builder.Services.AddSlackNet(c => c.UseApiToken(settings.Token));
+        builder.Services.AddSlackNet(c => c.UseApiToken(slackSettings.Token));
 
-        builder.Services.AddHttpClient<IPersonioService>((sp, client) =>
+        builder.Services.AddHttpClient<IPersonioService>((_, client) =>
         {
-            var settings = sp.GetRequiredService<IOptions<PersonioSettings>>().Value;
-
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings.Token);
-            client.DefaultRequestHeaders.Add("X-Personio-Partner-ID", settings.PartnerId);
-            client.DefaultRequestHeaders.Add("X-Personio-App-ID", settings.AppId);
             client.BaseAddress = new Uri("https://api.personio.de/v1");
         });
     }
 }
-
 
 record SlackSettings
 {
     public string Token { get; set; }
 }
 
-record PersonioSettings
+public record PersonioSettings
 {
-    public string Token { get; set; }
-    public string PartnerId { get; set; }
-    public string AppId { get; set; }
+    public string ClientId { get; set; }
+    public string ClientSecret { get; set; }
 }

@@ -5,7 +5,7 @@ namespace Rotation.Domain.Calendars;
 public interface ICalendar
     : IAggregation
 {
-    public Guid UserId { get; }
+    public int UserId { get; }
 
     public IEnumerable<CalendarDay> Days { get; }
 

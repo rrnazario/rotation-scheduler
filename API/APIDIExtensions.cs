@@ -2,9 +2,8 @@
 using Carter;
 using Carter.OpenApi;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 
-namespace API;
+namespace Rotation.API;
 
 public static class APIDIExtensions
 {
@@ -27,7 +26,6 @@ public static class APIDIExtensions
         });
 
         builder.Services.AddCarter();
-        builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         builder.Services.AddApiVersioning(options =>
         {

@@ -1,4 +1,4 @@
-﻿using static Rotation.Infra.Services.Personio.PersonioEmployeeModels;
+﻿using static Rotation.Infra.Services.Personio.Models.PersonioEmployeeModels;
 
 namespace Rotation.Infra.Services.Personio;
 

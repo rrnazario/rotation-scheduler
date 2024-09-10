@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Rotation.Infra;
+namespace Rotation.Application;
 
 public static class ApplicationDIExtensions
 {
