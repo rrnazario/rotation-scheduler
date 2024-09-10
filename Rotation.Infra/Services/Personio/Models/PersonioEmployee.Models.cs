@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using static Rotation.Infra.Services.Personio.Models.PersonioModels;
 
 namespace Rotation.Infra.Services.Personio.Models;
@@ -10,7 +9,6 @@ namespace Rotation.Infra.Services.Personio.Models;
 public static class PersonioEmployeeModels
 {
     public class PersonioEmployeeAttribute
-    //: Dictionary<string, PersonioEmployeeField>;
     {
         public string Value { get; set; }
         public string Label { get; set; }
@@ -29,15 +27,7 @@ public static class PersonioEmployeeModels
 
         public static PersonioEmployeeResponse Parse(PersonioResponse<PersonioEmployeeAttribute> personioResponse)
         {
-            var type = typeof(PersonioEmployeeResponse);
-            var ctor = type.GetConstructor(
-            BindingFlags.Instance | BindingFlags.Public,
-            null,
-            CallingConventions.HasThis,
-            [],
-            null);
-
-            var instance = (PersonioEmployeeResponse)ctor.Invoke([]);
+            var instance = PersonioResponseHelper.CreateInstance<PersonioEmployeeResponse>();
 
             foreach (var personioResponseData in personioResponse.Data)
             {

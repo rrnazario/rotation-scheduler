@@ -19,5 +19,4 @@ public static class PersonioModels
         public Dictionary<string, TAttribute> Attributes { get; set; }
         //public TAttribute Attribute { get; set; }
     }
-
 }

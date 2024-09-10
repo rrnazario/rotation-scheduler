@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Asp.Versioning;
+﻿using Asp.Versioning;
 using Carter;
 using Carter.OpenApi;
 using Microsoft.OpenApi.Models;
@@ -27,7 +26,6 @@ public static class APIDIExtensions
         });
 
         builder.Services.AddCarter();
-        builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         builder.Services.AddApiVersioning(options =>
         {
