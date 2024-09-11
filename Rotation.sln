@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotation.API", "API\Rotation.API.csproj", "{FE155740-147B-47A0-ACC7-95ED8C57E46B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotation.API", "Rotation.API\Rotation.API.csproj", "{FE155740-147B-47A0-ACC7-95ED8C57E46B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotation.Domain", "Rotation.Domain\Rotation.Domain.csproj", "{E5F4FBD8-38AE-4DAF-9A9B-381C998CF19F}"
 EndProject

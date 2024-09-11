@@ -1,0 +1,26 @@
+version: '3'
+services:
+  rotation-api:
+    container_name: 'rotation-api'
+    image: 'shop-api'
+    build:
+      context: .
+      dockerfile: Rotation.API/Dockerfile
+    ports:
+      - '9080:80'
+    depends_on:
+      - 'postgres'
+    profiles: ["api"]
+
+  postgres:
+    ports:
+      - '7777:5432'
+    container_name: rotation-db
+    image: 'postgres:12'
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=rotation
+      - POSTGRES_PASSWORD=rotation
+      - POSTGRES_DB=rotation
+    profiles: ["infra", "api"]
