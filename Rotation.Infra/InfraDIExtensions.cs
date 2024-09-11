@@ -11,6 +11,7 @@ using Rotation.Infra.Users;
 using SlackNet.AspNetCore;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 namespace Rotation.Infra;
 
@@ -26,8 +27,28 @@ public static class InfraDIExtensions
 
         builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
+        RegisterDatabase(builder);
         RegisterRepositories(builder);
         RegisterHttpClients(builder);
+    }
+
+    private static void RegisterDatabase(WebApplicationBuilder builder)
+    {
+        builder.Services.AddDbContext<DatabaseContext>(ctx =>
+        {
+            var options = builder.Configuration
+                    .GetSection("Database")
+                    .Get<EFPersistenceOptions>()!;
+
+            ctx.UseNpgsql(options.ConnectionString, action =>
+            {
+                action.EnableRetryOnFailure(options.MaxRetryCount);
+                action.CommandTimeout(options.CommandTimeout);
+            });
+
+            ctx.EnableDetailedErrors(options.EnableDetailedErrors);
+            ctx.EnableSensitiveDataLogging(options.EnableSensitiveDataLogging);
+        });
     }
 
     private static void RegisterRepositories(WebApplicationBuilder builder)
@@ -38,9 +59,9 @@ public static class InfraDIExtensions
 
     private static void RegisterHttpClients(WebApplicationBuilder builder)
     {
-        var slackSettings = builder.Configuration.GetSection("Slack").Get<SlackSettings>()!;
+        var settings = builder.Configuration.GetSection("Slack").Get<SlackSettings>()!;
 
-        builder.Services.AddSlackNet(c => c.UseApiToken(slackSettings.Token));
+        builder.Services.AddSlackNet(c => c.UseApiToken(settings.Token));
 
         builder.Services.AddHttpClient<IPersonioService>((_, client) =>
         {
@@ -59,3 +80,10 @@ public record PersonioSettings
     public string ClientId { get; set; }
     public string ClientSecret { get; set; }
 }
+
+public record EFPersistenceOptions(
+    string ConnectionString,
+    int MaxRetryCount = 5,
+    int CommandTimeout = 100,
+    bool EnableDetailedErrors = false,
+    bool EnableSensitiveDataLogging = false);

@@ -1,4 +1,3 @@
-version: '3'
 services:
   rotation-api:
     container_name: 'rotation-api'

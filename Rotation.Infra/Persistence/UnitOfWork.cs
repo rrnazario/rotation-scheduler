@@ -5,8 +5,15 @@ namespace Rotation.Infra.Persistence;
 internal class UnitOfWork
     : IUnitOfWork
 {
-    public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    private readonly DatabaseContext _dbContext;
+
+    public UnitOfWork(DatabaseContext dbContext)
     {
-        return Task.CompletedTask;
+        _dbContext = dbContext;
+    }
+
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        await _dbContext.SaveChangesAsync(cancellationToken);        
     }
 }

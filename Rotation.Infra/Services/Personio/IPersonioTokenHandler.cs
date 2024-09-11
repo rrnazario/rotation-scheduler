@@ -9,7 +9,7 @@ public interface IPersonioTokenHandler
 public class PersonioTokenHandler 
     : IPersonioTokenHandler
 {
-    private static string _token;
+    private static string _token = "";
 
     public string GetToken() => _token;
 
