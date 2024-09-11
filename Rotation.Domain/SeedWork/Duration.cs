@@ -7,6 +7,8 @@ public record Duration
     public DateTime Begin { get; }
     public DateTime CurrentBegin { get; private set; }
 
+    private Duration() { }
+
     public Duration(int amount, DurationType durationType, DateTime begin)
     {
         Amount = amount;

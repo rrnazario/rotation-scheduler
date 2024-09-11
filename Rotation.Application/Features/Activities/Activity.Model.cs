@@ -1,11 +1,15 @@
-﻿using Rotation.Domain.Activities;
+﻿using Rotation.Application.Features.Users;
+using Rotation.Domain.Activities;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Net;
 
 namespace Rotation.Application.Features.Activities;
 
 public class Activity : IActivity
 {
+    public Activity() { }
     public Activity(string name, string description, Duration duration)
     {
         Name = name;
@@ -17,9 +21,17 @@ public class Activity : IActivity
     public string Name { get; private set; }
     public string Description { get; private set; }
     public Duration Duration { get; private set; }
-    public IEnumerable<IUser> Users { get; private set; } = [];
 
-    public int Id {  get; private set; }
+    public ICollection<User> Users { get; set; }
+
+    [NotMapped]
+    ICollection<IUser> IActivity.Users
+    {
+        get { return Users as ICollection<IUser>; }
+    }
+
+    public int Id { get; private set; }
+
 
     public bool TryAddUser(IUser user)
     {
@@ -28,7 +40,7 @@ public class Activity : IActivity
             return false;
         }
 
-        Users = Users.Concat([user]);
+        Users.Add((User) user);
 
         return true;
     }
@@ -41,7 +53,7 @@ public class Activity : IActivity
         {
             var availability = user.GetAvailability(Duration);
             var availabilityPercentage = availability.AvailabilityPercentage;
-            
+
             if (availabilityPercentage > 50)
             {
                 if (main is null)
@@ -52,7 +64,7 @@ public class Activity : IActivity
 
                 if (replacer is null)
                 {
-                    replacer = user; 
+                    replacer = user;
                     continue;
                 }
 
@@ -77,22 +89,22 @@ public class Activity : IActivity
     private void MoveMainUserToEnd(IUser user)
     {
         var currentUsers = Users.ToList();
-        currentUsers.Remove(user!);
+        currentUsers.Remove((User) user!);
 
-        Users = currentUsers.Append(user!);
+        currentUsers.Append(user!);
     }
 
     private void MoveNotAvailableUsersTopList(List<IUser> users)
     {
         if (!users.Any()) return;
-        
+
         var currentUsers = Users.ToList();
         users.Reverse();
 
         foreach (var user in users)
         {
-            currentUsers.Remove(user!);
-            currentUsers.Insert(0, user!);
+            currentUsers.Remove((User)user!);
+            currentUsers.Insert(0, (User) user!);
         }
 
         Users = currentUsers;

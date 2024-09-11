@@ -8,7 +8,7 @@ public interface IActivity : IAggregation
     public string Name { get; }
     public string Description { get; }
     public Duration Duration { get; }
-    public IEnumerable<IUser> Users { get; }
+    public ICollection<IUser> Users { get; }
     bool TryAddUser(IUser user);
     void Rotate();
     ActivityResume GetActivityResume();
