@@ -2,7 +2,7 @@ version: '3'
 services:
   rotation-api:
     container_name: 'rotation-api'
-    image: 'shop-api'
+    image: 'rotation-api'
     build:
       context: .
       dockerfile: Rotation.API/Dockerfile

@@ -8,7 +8,7 @@ namespace Rotation.API;
 public static class APIDIExtensions
 {
     /// <summary>
-    /// Will register Carter, Swagger, APIVersioning and Mediator properly
+    /// Will register Carter, Swagger, APIVersioning
     /// </summary>
     public static void AddAPI(this WebApplicationBuilder builder)
     {
@@ -16,9 +16,9 @@ public static class APIDIExtensions
         {
             options.SwaggerDoc("v1", new OpenApiInfo
             {
-                Description = "Shop API",
+                Description = "Rotation API",
                 Version = "v1",
-                Title = "Shop API"
+                Title = "Rotation API"
             });
 
             options.DocInclusionPredicate((_, description) =>
