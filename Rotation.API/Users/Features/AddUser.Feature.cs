@@ -5,6 +5,7 @@ using MediatR;
 using Rotation.Application.Features.Users;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
+using Rotation.Infra.Services.Personio;
 
 namespace Rotation.API.Users.Features;
 
@@ -32,7 +33,7 @@ public static class AddUser
             RuleFor(_ => _.Email)
                 .NotEmpty()
                 .WithMessage("Email must have a value");
-                //.Must(e => e); // add email validation
+            //.Must(e => e); // add email validation
 
         }
     }
@@ -42,29 +43,57 @@ public static class AddUser
         private readonly IMediator _mediator;
         private readonly IUserRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPersonioClient _personioClient;
 
         public Handler(
             IMediator metiator,
             IUserRepository repository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IPersonioClient client)
         {
             _mediator = metiator;
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _personioClient = client;
         }
 
         public async Task<AddUserResponse> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
-            var entity = new User(request.Name, request.Email);
+            int id = default;
+            bool infoChanged = false;
+            var entityUser = await _repository.GetByEmailsAsync([request.Email], cancellationToken);
 
-            var newId = await _repository.AddAsync(entity, cancellationToken);
-            var response = new AddUserResponse(newId);
+            if (entityUser is { Length: > 0 } && (entityUser[0] is User user))
+            {
+                id = user.Id;
+            }
+            else
+            {
+                user = new User(request.Name, request.Email);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+                id = await _repository.AddAsync(user, cancellationToken);
+                infoChanged = true;
+            }
 
-            //await _mediator.Publish(response);
+            infoChanged = infoChanged || await TryUpdatePersonioInfoAsync(user, cancellationToken);
 
-            return response;
+            if (infoChanged)
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return new AddUserResponse(id);
+        }
+
+        private async Task<bool> TryUpdatePersonioInfoAsync(User entity, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(entity.ExternalId))
+            {
+                var personioUser = await _personioClient.GetEmployeeByEmail(entity.Email, cancellationToken);
+
+                entity.ExternalId = personioUser.Id;
+                return true;
+            }
+
+            return false;
         }
     }
 }

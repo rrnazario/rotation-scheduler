@@ -2,7 +2,7 @@
 
 namespace Rotation.Infra.Services.Personio;
 
-public interface IPersonioService
+public interface IPersonioClient
 {
     Task<PersonioEmployeeResponse> GetEmployeeByEmail(string email, CancellationToken cancellationToken);
 }

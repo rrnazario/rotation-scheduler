@@ -63,7 +63,7 @@ public static class InfraDIExtensions
 
         builder.Services.AddSlackNet(c => c.UseApiToken(settings.Token));
 
-        builder.Services.AddHttpClient<IPersonioService>((_, client) =>
+        builder.Services.AddHttpClient<IPersonioClient>((_, client) =>
         {
             client.BaseAddress = new Uri("https://api.personio.de/v1");
         });

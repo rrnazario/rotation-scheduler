@@ -7,14 +7,14 @@ using static Rotation.Infra.Services.Personio.Models.PersonioTimeOffModels;
 
 namespace Rotation.Infra.Services.Personio;
 
-public class PersonioService
-    : IPersonioService
+public class PersonioClient
+    : IPersonioClient
 {
     private readonly HttpClient _httpClient;
     private readonly IPersonioTokenHandler _personioTokenHandler;
     private readonly PersonioSettings _personioSettings;
 
-    public PersonioService(HttpClient httpClient, IPersonioTokenHandler personioTokenHandler,
+    public PersonioClient(HttpClient httpClient, IPersonioTokenHandler personioTokenHandler,
         PersonioSettings personioSettings)
     {
         _httpClient = httpClient;
