@@ -11,14 +11,14 @@ public class PersonioClient
     : IPersonioClient
 {
     private readonly HttpClient _httpClient;
-    private readonly IPersonioTokenHandler _personioTokenHandler;
+    private readonly IPersonioTokenHandler _tokenHandler;
     private readonly PersonioSettings _personioSettings;
 
     public PersonioClient(HttpClient httpClient, IPersonioTokenHandler personioTokenHandler,
         PersonioSettings personioSettings)
     {
         _httpClient = httpClient;
-        _personioTokenHandler = personioTokenHandler;
+        _tokenHandler = personioTokenHandler;
         _personioSettings = personioSettings;
     }
 
@@ -26,7 +26,7 @@ public class PersonioClient
     {
         var personioResponse = await PerformRequest<PersonioResponse<PersonioEmployeeAttribute>>(
             HttpMethod.Get,
-            $"company/employees?email={email}", cancellationToken);
+            $"company/employees?email={email}", cancellation: cancellationToken);
 
         return PersonioEmployeeResponse.Parse(personioResponse!);
     }
@@ -35,32 +35,32 @@ public class PersonioClient
         CancellationToken cancellationToken)
     {
         var personioResponse = await PerformRequest<PersonioResponse<dynamic>>(HttpMethod.Get,
-            $"company/time-offs{request.ToParams()}", cancellationToken);
+            $"company/time-offs{request.ToParams()}", cancellation: cancellationToken);
 
         return PersonioTimeOffResponse.Parse(personioResponse!);
     }
 
     private async Task<TResponse?> PerformRequest<TResponse>(HttpMethod method, string url,
-        CancellationToken cancellationToken, bool isFinalRetry = false)
+        bool isFinalRetry = false, CancellationToken cancellation = default)
     {
         try
         {
             var message = new HttpRequestMessage(method, url);
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _personioTokenHandler.GetToken());
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenHandler.GetToken());
 
-            var response = await _httpClient.SendAsync(message, cancellationToken);
+            var response = await _httpClient.SendAsync(message, cancellation);
 
-            await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            await using var responseStream = await response.Content.ReadAsStreamAsync(cancellation);
             return await JsonSerializer.DeserializeAsync<TResponse>(responseStream,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellation);
         }
         catch (UnauthorizedAccessException)
         {
             if (isFinalRetry) throw;
 
-            await Authenticate(cancellationToken);
+            await Authenticate(cancellation);
 
-            return await PerformRequest<TResponse>(method, url, cancellationToken, true);
+            return await PerformRequest<TResponse>(method, url, isFinalRetry: true, cancellation);
         }
     }
 
@@ -80,6 +80,6 @@ public class PersonioClient
         var s = await JsonSerializer.DeserializeAsync<dynamic>(responseStream,
             cancellationToken: cancellationToken);
 
-        _personioTokenHandler.SetToken(s!.data.token);
+        _tokenHandler.SetToken(s!.data.token);
     }
 }
