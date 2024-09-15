@@ -14,7 +14,9 @@ public class PersonioClient
     private readonly IPersonioTokenHandler _tokenHandler;
     private readonly PersonioSettings _personioSettings;
 
-    public PersonioClient(HttpClient httpClient, IPersonioTokenHandler personioTokenHandler,
+    public PersonioClient(
+        HttpClient httpClient, 
+        IPersonioTokenHandler personioTokenHandler,
         PersonioSettings personioSettings)
     {
         _httpClient = httpClient;
@@ -45,7 +47,7 @@ public class PersonioClient
     {
         try
         {
-            var message = new HttpRequestMessage(method, url);
+            using var message = new HttpRequestMessage(method, url);
             message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenHandler.GetToken());
 
             var response = await _httpClient.SendAsync(message, cancellation);
