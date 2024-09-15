@@ -50,7 +50,7 @@ public class PersonioClient
             using var message = new HttpRequestMessage(method, url);
             message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenHandler.GetToken());
 
-            var response = await _httpClient.SendAsync(message, cancellation);
+            using var response = await _httpClient.SendAsync(message, cancellation);
 
             await using var responseStream = await response.Content.ReadAsStreamAsync(cancellation);
             return await JsonSerializer.DeserializeAsync<TResponse>(responseStream,
