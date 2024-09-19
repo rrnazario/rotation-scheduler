@@ -14,11 +14,17 @@ public interface IActivity : IAggregation
     ActivityResume GetActivityResume();
 }
 
-public record ActivityResume(IUser Main, IUser? Replacer, DateTime CurrentBegin, DateTime CurrentEnd, string Name, IUser[] UnavailableUsers)
+public record ActivityResume(
+    IUser? Main,
+    IUser? Replacer,
+    DateTime CurrentBegin,
+    DateTime CurrentEnd,
+    string Name,
+    IUser[] UnavailableUsers)
 {
     public override string ToString()
         => $"Activity '{Name}'\n" +
-           $"In Charge: {Main.Name} ({Main.Email})\n" +
+           $"In Charge: {Main?.Name} ({Main?.Email})\n" +
            $"Replacer: {Replacer?.Name} ({Replacer?.Email})\n" +
            $"From: {CurrentBegin:dd/MM/yyyy HH:mm}\n" +
            $"To: {CurrentEnd:dd/MM/yyyy HH:mm}";

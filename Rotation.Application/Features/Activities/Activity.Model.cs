@@ -3,13 +3,15 @@ using Rotation.Domain.Activities;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net;
 
 namespace Rotation.Application.Features.Activities;
 
 public class Activity : IActivity
 {
-    public Activity() { }
+    public Activity()
+    {
+    }
+
     public Activity(string name, string description, Duration duration)
     {
         Name = name;
@@ -25,22 +27,19 @@ public class Activity : IActivity
     public ICollection<User> Users { get; set; }
 
     [NotMapped]
-    ICollection<IUser> IActivity.Users
-    {
-        get { return Users as ICollection<IUser>; }
-    }
+    ICollection<IUser> IActivity.Users => Users as ICollection<IUser>;
 
     public int Id { get; private set; }
 
 
     public bool TryAddUser(IUser user)
     {
-        if (Users.Any(u => u.Id == user.Id))
+        if (Users.Any(u => u.Email == user.Email))
         {
             return false;
         }
 
-        Users.Add((User) user);
+        Users.Add((User)user);
 
         return true;
     }
@@ -54,7 +53,7 @@ public class Activity : IActivity
             var availability = user.GetAvailability(Duration);
             var availabilityPercentage = availability.AvailabilityPercentage;
 
-            if (availabilityPercentage > 50)
+            if (availabilityPercentage > 70)
             {
                 if (main is null)
                 {
@@ -74,7 +73,8 @@ public class Activity : IActivity
             unavailableUsers.Add(user);
         }
 
-        return new ActivityResume(main, replacer, Duration.CurrentBegin, Duration.CurrentEnd(), Name, unavailableUsers.ToArray());
+        return new ActivityResume(main, replacer, Duration.CurrentBegin, Duration.CurrentEnd(), Name,
+            unavailableUsers.ToArray());
     }
 
     public void Rotate()
@@ -89,7 +89,7 @@ public class Activity : IActivity
     private void MoveMainUserToEnd(IUser user)
     {
         var currentUsers = Users.ToList();
-        currentUsers.Remove((User) user!);
+        currentUsers.Remove((User)user!);
 
         currentUsers.Append(user!);
     }
@@ -104,11 +104,9 @@ public class Activity : IActivity
         foreach (var user in users)
         {
             currentUsers.Remove((User)user!);
-            currentUsers.Insert(0, (User) user!);
+            currentUsers.Insert(0, (User)user!);
         }
 
         Users = currentUsers;
     }
 }
-
-

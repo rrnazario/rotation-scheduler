@@ -16,7 +16,7 @@ public interface ICalendar
 
 public record CalendarDay(DateTime Date, bool Available);
 
-public record CalendarAvailability(Dictionary<DateTime, bool> Availability)
+public record CalendarAvailability(List<CalendarDay> Availability)
 {
-    public int AvailabilityPercentage => Availability.Values.Count(v => v) * 100 / Availability.Count;
+    public int AvailabilityPercentage => Availability.Count(v => v.Available) * 100 / Availability.Count;
 }

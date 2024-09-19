@@ -7,6 +7,7 @@ public interface IUser : IAggregation
 {
     string Name { get; }
     string Email { get; }
+    string ExternalId { get; set; }
     ICalendar Calendar { get; }
 
     void FillCalendar(ICalendar calendar);

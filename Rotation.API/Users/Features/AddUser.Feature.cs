@@ -19,9 +19,10 @@ public static class AddUser
     internal record AddUserResponse(int Id);
 
     class Validator
-    : AbstractValidator<AddUserCommand>
+        : AbstractValidator<AddUserCommand>
     {
         private readonly IServiceProvider _serviceProvider;
+
         public Validator(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -34,7 +35,6 @@ public static class AddUser
                 .NotEmpty()
                 .WithMessage("Email must have a value");
             //.Must(e => e); // add email validation
-
         }
     }
 
@@ -59,11 +59,11 @@ public static class AddUser
 
         public async Task<AddUserResponse> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
-            int id = default;
+            int id;
             bool infoChanged = false;
             var entityUser = await _repository.GetByEmailsAsync([request.Email], cancellationToken);
 
-            if (entityUser is { Length: > 0 } && (entityUser[0] is User user))
+            if (entityUser is { Length: > 0 } && entityUser[0] is User user)
             {
                 id = user.Id;
             }
@@ -83,17 +83,16 @@ public static class AddUser
             return new AddUserResponse(id);
         }
 
-        private async Task<bool> TryUpdatePersonioInfoAsync(User entity, CancellationToken cancellationToken)
+        private async Task<bool> TryUpdatePersonioInfoAsync(IUser entity, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(entity.ExternalId))
-            {
-                var personioUser = await _personioClient.GetEmployeeByEmail(entity.Email, cancellationToken);
+            if (!string.IsNullOrEmpty(entity.ExternalId)) 
+                return false;
 
-                entity.ExternalId = personioUser.Id;
-                return true;
-            }
+            var personioUser = await _personioClient.GetEmployeeByEmail(entity.Email, cancellationToken);
 
-            return false;
+            entity.ExternalId = personioUser.Id;
+
+            return true;
         }
     }
 }
@@ -101,16 +100,16 @@ public static class AddUser
 public class AddUserModule : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
-    => app
+        => app
             .MapPost<AddUser.AddUserCommand>(
-            UserConstants.Route,
-            async (ISender sender, AddUser.AddUserCommand command) =>
-            {
-                var response = await sender.Send(command);
+                UserConstants.Route,
+                async (ISender sender, AddUser.AddUserCommand command) =>
+                {
+                    var response = await sender.Send(command);
 
-                return Results.Created(UserConstants.Route, response);
-            })
-           .IncludeInOpenApi()
-           .Produces<AddUser.AddUserResponse>(StatusCodes.Status201Created)
-           .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
+                    return Results.Created(UserConstants.Route, response);
+                })
+            .IncludeInOpenApi()
+            .Produces<AddUser.AddUserResponse>(StatusCodes.Status201Created)
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 }
