@@ -11,47 +11,47 @@ public class PersonioServiceEmployeeTests
     {
         var personioResponse = new PersonioResponse<PersonioEmployeeAttribute>
         {
-            Success = true,
-            Data =
+            success = true,
+            data =
             [
                 new PersonioResponseData<PersonioEmployeeAttribute>
                 {
-                    Attributes = new Dictionary<string, PersonioEmployeeAttribute>
+                    attributes = new Dictionary<string, PersonioEmployeeAttribute>
                     {
                         {
                             "id",
                             new PersonioEmployeeAttribute
                             {
-                                Label = "ID",
-                                Type = "standard",
-                                Value = "1"
+                                label = "ID",
+                                type = "standard",
+                                value = "1"
                             }
                         },
                         {
                             "email",
                             new PersonioEmployeeAttribute
                             {
-                                Label = "email",
-                                Type = "standard",
-                                Value = "r@r.com"
+                                label = "email",
+                                type = "standard",
+                                value = "r@r.com"
                             }
                         },
                         {
                             "first_name",
                             new PersonioEmployeeAttribute
                             {
-                                Label = "email",
-                                Type = "standard",
-                                Value = "r@r.com"
+                                label = "email",
+                                type = "standard",
+                                value = "r@r.com"
                             }
                         },
                         {
                             "last_name",
                             new PersonioEmployeeAttribute
                             {
-                                Label = "email",
-                                Type = "standard",
-                                Value = "r@r.com"
+                                label = "email",
+                                type = "standard",
+                                value = "r@r.com"
                             }   
                         }
                     }
@@ -62,7 +62,7 @@ public class PersonioServiceEmployeeTests
         var result = PersonioEmployeeResponse.Parse(personioResponse);
 
         result.Should().NotBeNull();
-        result.Id.Should().Be(personioResponse.Data[0].Attributes["id"].Value);
-        result.Email.Should().Be(personioResponse.Data[0].Attributes["email"].Value);
+        result.id.Should().Be(personioResponse.data[0].attributes["id"].value.ToString());
+        result.email.Should().Be(personioResponse.data[0].attributes["email"].value.ToString());
     }
 }

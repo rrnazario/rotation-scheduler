@@ -8,15 +8,14 @@ public static class PersonioModels
     public class PersonioResponse<TAttribute>
         where TAttribute : class
     {
-        public bool Success { get; set; }
-        public PersonioResponseData<TAttribute>[] Data { get; set; }
+        public bool success { get; set; }
+        public PersonioResponseData<TAttribute>[] data { get; set; }
     }
 
     public class PersonioResponseData<TAttribute>
         where TAttribute : class
     {
-        public string Type { get; set; }
-        public Dictionary<string, TAttribute> Attributes { get; set; }
-        //public TAttribute Attribute { get; set; }
+        public string type { get; set; }
+        public Dictionary<string, TAttribute> attributes { get; set; }
     }
 }

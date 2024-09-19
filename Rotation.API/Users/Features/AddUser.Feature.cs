@@ -75,7 +75,7 @@ public static class AddUser
                 infoChanged = true;
             }
 
-            infoChanged = infoChanged || await TryUpdatePersonioInfoAsync(user, cancellationToken);
+            infoChanged |= await TryUpdatePersonioInfoAsync(user, cancellationToken);
 
             if (infoChanged)
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -90,7 +90,7 @@ public static class AddUser
 
             var personioUser = await _personioClient.GetEmployeeByEmail(entity.Email, cancellationToken);
 
-            entity.ExternalId = personioUser.Id;
+            entity.ExternalId = personioUser.id;
 
             return true;
         }

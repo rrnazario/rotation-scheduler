@@ -9,7 +9,6 @@ using Rotation.Infra.Activities;
 using Rotation.Infra.Persistence;
 using Rotation.Infra.Users;
 using SlackNet.AspNetCore;
-using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,8 +23,6 @@ public static class InfraDIExtensions
         builder.Services.AddSingleton<IPersonioTokenHandler, PersonioTokenHandler>();
         var personioSettings = builder.Configuration.GetSection("Personio").Get<PersonioSettings>()!;
         builder.Services.AddSingleton(personioSettings);
-
-        builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         RegisterDatabase(builder);
         RegisterRepositories(builder);
@@ -59,13 +56,13 @@ public static class InfraDIExtensions
 
     private static void RegisterHttpClients(WebApplicationBuilder builder)
     {
-        var settings = builder.Configuration.GetSection("Slack").Get<SlackSettings>()!;
+        var slackSettings = builder.Configuration.GetSection("Slack").Get<SlackSettings>()!;
 
-        builder.Services.AddSlackNet(c => c.UseApiToken(settings.Token));
+        builder.Services.AddSlackNet(c => c.UseApiToken(slackSettings.Token));
 
-        builder.Services.AddHttpClient<IPersonioClient, PersonioClient>((_, client) =>
+        builder.Services.AddHttpClient<IPersonioClient, PersonioClient>((sp, client) =>
         {
-            client.BaseAddress = new Uri("https://api.personio.de/v1");
+            client.BaseAddress = new Uri("https://api.personio.de/v1/");
         });
     }
 }
