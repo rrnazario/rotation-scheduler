@@ -12,12 +12,12 @@ public class PersonioServiceTimeOffTests
     {
         var personioResponse = new PersonioResponse<dynamic>
         {
-            Success = true,
-            Data =
+            success = true,
+            data =
             [
                 new PersonioResponseData<dynamic>
                 {
-                    Attributes = new Dictionary<string, dynamic>
+                    attributes = new Dictionary<string, dynamic>
                     {
                         {
                             "id",
@@ -39,47 +39,47 @@ public class PersonioServiceTimeOffTests
                             "employee",
                             new PersonioResponse<PersonioEmployeeModels.PersonioEmployeeAttribute>
                             {
-                                Data =
+                                data =
                                 [
                                     new PersonioResponseData<PersonioEmployeeModels.PersonioEmployeeAttribute>
                                     {
-                                        Attributes =
+                                        attributes =
                                             new Dictionary<string, PersonioEmployeeModels.PersonioEmployeeAttribute>
                                             {
                                                 {
                                                     "id",
                                                     new PersonioEmployeeModels.PersonioEmployeeAttribute
                                                     {
-                                                        Label = "ID",
-                                                        Type = "standard",
-                                                        Value = "1"
+                                                        label = "ID",
+                                                        type = "standard",
+                                                        value = "1"
                                                     }
                                                 },
                                                 {
                                                     "email",
                                                     new PersonioEmployeeModels.PersonioEmployeeAttribute
                                                     {
-                                                        Label = "email",
-                                                        Type = "standard",
-                                                        Value = "r@r.com"
+                                                        label = "email",
+                                                        type = "standard",
+                                                        value = "r@r.com"
                                                     }
                                                 },
                                                 {
                                                     "first_name",
                                                     new PersonioEmployeeModels.PersonioEmployeeAttribute
                                                     {
-                                                        Label = "email",
-                                                        Type = "standard",
-                                                        Value = "r@r.com"
+                                                        label = "email",
+                                                        type = "standard",
+                                                        value = "r@r.com"
                                                     }
                                                 },
                                                 {
                                                     "last_name",
                                                     new PersonioEmployeeModels.PersonioEmployeeAttribute
                                                     {
-                                                        Label = "email",
-                                                        Type = "standard",
-                                                        Value = "r@r.com"
+                                                        label = "email",
+                                                        type = "standard",
+                                                        value = "r@r.com"
                                                     }
                                                 }
                                             }
@@ -95,8 +95,8 @@ public class PersonioServiceTimeOffTests
         var result = PersonioTimeOffResponse.Parse(personioResponse);
 
         result.Should().NotBeNull();
-        result.Id.Should().Be(personioResponse.Data[0].Attributes["id"]);
+        result.Id.Should().Be(personioResponse.data[0].attributes["id"]);
         result.EmployeeEmail.Should()
-            .Be(personioResponse.Data[0].Attributes["employee"].Data[0].Attributes["email"].Value);
+            .Be(personioResponse.data[0].attributes["employee"].Data[0].Attributes["email"].Value);
     }
 }

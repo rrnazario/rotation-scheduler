@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using static Rotation.Infra.Services.Personio.Models.PersonioEmployeeModels;
@@ -15,7 +16,7 @@ public class PersonioClient
     private readonly PersonioSettings _personioSettings;
 
     public PersonioClient(
-        HttpClient httpClient, 
+        HttpClient httpClient,
         IPersonioTokenHandler personioTokenHandler,
         PersonioSettings personioSettings)
     {
@@ -45,25 +46,23 @@ public class PersonioClient
     private async Task<TResponse?> PerformRequest<TResponse>(HttpMethod method, string url,
         bool isFinalRetry = false, CancellationToken cancellation = default)
     {
-        try
-        {
-            using var message = new HttpRequestMessage(method, url);
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenHandler.GetToken());
+        using var message = new HttpRequestMessage(method, url);
+        message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenHandler.GetToken());
 
-            using var response = await _httpClient.SendAsync(message, cancellation);
+        using var response = await _httpClient.SendAsync(message, cancellation);
 
-            await using var responseStream = await response.Content.ReadAsStreamAsync(cancellation);
-            return await JsonSerializer.DeserializeAsync<TResponse>(responseStream,
-                cancellationToken: cancellation);
-        }
-        catch (UnauthorizedAccessException)
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
-            if (isFinalRetry) throw;
+            if (isFinalRetry) throw new UnauthorizedAccessException();
 
             await Authenticate(cancellation);
 
             return await PerformRequest<TResponse>(method, url, isFinalRetry: true, cancellation);
         }
+
+        await using var responseStream = await response.Content.ReadAsStreamAsync(cancellation);
+        return await JsonSerializer.DeserializeAsync<TResponse>(responseStream,
+            cancellationToken: cancellation);
     }
 
     private async Task Authenticate(CancellationToken cancellationToken)
@@ -79,9 +78,19 @@ public class PersonioClient
         response.EnsureSuccessStatusCode();
 
         await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-        var s = await JsonSerializer.DeserializeAsync<dynamic>(responseStream,
+        var s = await JsonSerializer.DeserializeAsync<AuthenticationResponse>(responseStream,
             cancellationToken: cancellationToken);
 
         _tokenHandler.SetToken(s!.data.token);
     }
+}
+
+record AuthenticationResponse
+{
+    public AuthData data { get; set; }
+}
+
+record AuthData
+{
+    public string token { get; set; }
 }

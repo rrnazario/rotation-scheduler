@@ -22,17 +22,17 @@ public static class PersonioTimeOffModels
         {
             var instance = PersonioResponseHelper.CreateInstance<PersonioTimeOffResponse>();
 
-            foreach (var personioResponseData in personioResponse.Data)
+            foreach (var personioResponseData in personioResponse.data)
             {
-                instance.Id = personioResponseData.Attributes["id"];
-                instance.StartDate = personioResponseData.Attributes["start_date"];
-                instance.EndDate = personioResponseData.Attributes["end_date"];
+                instance.Id = personioResponseData.attributes["id"];
+                instance.StartDate = personioResponseData.attributes["start_date"];
+                instance.EndDate = personioResponseData.attributes["end_date"];
 
                 PersonioEmployeeModels.PersonioEmployeeResponse employee =
-                    PersonioEmployeeModels.PersonioEmployeeResponse.Parse(personioResponseData.Attributes["employee"]);
+                    PersonioEmployeeModels.PersonioEmployeeResponse.Parse(personioResponseData.attributes["employee"]);
 
-                instance.EmployeeEmail = employee.Email;
-                instance.EmployeeId = employee.Id;
+                instance.EmployeeEmail = employee.email;
+                instance.EmployeeId = employee.id;
             }
 
             return instance;

@@ -1,4 +1,5 @@
-﻿using Asp.Versioning;
+﻿using System.Reflection;
+using Asp.Versioning;
 using Carter;
 using Carter.OpenApi;
 using Microsoft.OpenApi.Models;
@@ -34,6 +35,8 @@ public static class APIDIExtensions
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.ApiVersionReader = new HeaderApiVersionReader("X-Api-Version");
         });
+        
+        builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
     }
 
     public static void UseAPI(this WebApplication app)

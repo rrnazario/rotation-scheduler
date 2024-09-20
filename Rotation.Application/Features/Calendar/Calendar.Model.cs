@@ -21,14 +21,14 @@ public class Calendar
 
     public CalendarAvailability GetAvailability(Duration duration)
     {
-        var result = new Dictionary<DateTime, bool>();
+        var result = new List<CalendarDay>();
         var durationDays = duration.GetCurrentInterval(); //01/09 a 14/09
 
         foreach (var durationDay in durationDays)
         {
             var day = Days.FirstOrDefault(d => d.Date.Date == durationDay.Date);
 
-            result.Add(durationDay.Date, day is { Available: true });
+            result.Add(day ?? new CalendarDay(durationDay.Date, false));
         }
 
         return new CalendarAvailability(result);
