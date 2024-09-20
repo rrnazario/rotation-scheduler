@@ -14,6 +14,10 @@ public class ActivityMapping
             activity.Property(x => x.Id).ValueGeneratedOnAdd();
 
             activity.Property(x => x.Duration).HasColumnType("jsonb");
-        }); 
+        });
+
+        modelBuilder.Entity<Activity>()
+            .HasMany(m => m.Users)
+            .WithMany(m => m.Activities);
     }
 }

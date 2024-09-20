@@ -2,6 +2,7 @@
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 using System.ComponentModel.DataAnnotations.Schema;
+using Rotation.Application.Features.Activities;
 
 namespace Rotation.Application.Features.Users;
 
@@ -20,6 +21,8 @@ public class User : IUser
     public string ExternalId {  get; set; }
     public string Name { get; private set; }
     public string Email { get; private set; }
+    
+    public ICollection<Activity> Activities { get; set; }
 
     [NotMapped]
     public ICalendar Calendar { get; private set; }

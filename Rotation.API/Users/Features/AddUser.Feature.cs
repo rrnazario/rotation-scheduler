@@ -59,28 +59,26 @@ public static class AddUser
 
         public async Task<AddUserResponse> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
-            int id;
             bool infoChanged = false;
             var entityUser = await _repository.GetByEmailsAsync([request.Email], cancellationToken);
 
-            if (entityUser is { Length: > 0 } && entityUser[0] is User user)
-            {
-                id = user.Id;
-            }
-            else
+            if (entityUser is not { Length: > 0 } || entityUser[0] is not User user)
             {
                 user = new User(request.Name, request.Email);
 
-                id = await _repository.AddAsync(user, cancellationToken);
+                user = (User)await _repository.AddAsync(user, cancellationToken);
+
                 infoChanged = true;
             }
 
             infoChanged |= await TryUpdatePersonioInfoAsync(user, cancellationToken);
 
             if (infoChanged)
+            {
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
+            }
 
-            return new AddUserResponse(id);
+            return new AddUserResponse(user.Id);
         }
 
         private async Task<bool> TryUpdatePersonioInfoAsync(IUser entity, CancellationToken cancellationToken)

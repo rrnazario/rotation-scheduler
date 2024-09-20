@@ -1,53 +1,40 @@
-﻿using Rotation.Application;
-using Rotation.Application.Features.Calendar;
-using Rotation.Domain.Calendars;
+﻿using Microsoft.EntityFrameworkCore;
+using Rotation.Application.Features.Users;
 using Rotation.Domain.Users;
+using Rotation.Infra.Persistence;
 
 namespace Rotation.Infra.Users;
 
 internal class UserRepository
     : IUserRepository
 {
-    private static readonly List<IUser> entities = TestData.Users;
-    public Task<int> AddAsync(IUser entity, CancellationToken cancellationToken = default)
-    {
-        entities.Add(entity);
+    private readonly DatabaseContext _databaseContext;
 
-        return Task.FromResult(entity.Id);
+    public UserRepository(DatabaseContext databaseContext)
+    {
+        _databaseContext = databaseContext;
     }
 
-    public Task<IEnumerable<IUser>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IUser> AddAsync(IUser entity, CancellationToken cancellationToken = default)
     {
-        foreach (var entity in entities)
-        {
-            var calendar = new Calendar(Random.Shared.Next(), entity.Id);
+        var user = await _databaseContext.Set<User>().AddAsync(entity as User, cancellationToken);
 
-            var begin = DateTime.UtcNow.AddDays(entities.IndexOf(entity) - 1);
-            var days = new List<CalendarDay>()
-            {
-                new CalendarDay(begin, true),
-                new CalendarDay(begin.AddDays(1), true),
-                new CalendarDay(begin.AddDays(2), true),
-                new CalendarDay(begin.AddDays(3), false),
-                new CalendarDay(begin.AddDays(4), false),
-                new CalendarDay(begin.AddDays(5), false),
-            };
-
-            calendar.FillDays(days);
-
-            entity.FillCalendar(calendar);
-        }
-
-        return Task.FromResult(entities.AsEnumerable());
+        return user.Entity;
     }
 
-    public Task<IUser[]?> GetByEmailsAsync(string[] userEmails, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<IUser>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(entities.Where(a => userEmails.Contains(a.Email)).ToArray());
+        return await _databaseContext.Set<User>().ToListAsync(cancellationToken);
     }
 
-    public Task<IUser?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<IUser[]?> GetByEmailsAsync(string[] userEmails, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(entities.Find(a => a.Id == id));
+        return await _databaseContext.Set<User>().Where(w => userEmails.Contains(w.Email))
+            .ToArrayAsync(cancellationToken);
+    }
+
+    public async Task<IUser?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _databaseContext.Set<User>().FindAsync(id, cancellationToken);
     }
 }

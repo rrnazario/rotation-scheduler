@@ -60,11 +60,11 @@ public static class AddActivity
         {
             var activity = new Activity(request.Name, request.Description, request.Duration);
 
-            var newId = await _repository.AddAsync(activity, cancellationToken);
-            var response = new AddActivityResponse(newId);
+            var newActivity = await _repository.AddAsync(activity, cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            var response = new AddActivityResponse(newActivity.Id);
             //await _mediator.Publish(response);
 
             return response;
