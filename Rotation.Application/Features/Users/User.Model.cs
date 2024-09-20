@@ -24,8 +24,7 @@ public class User : IUser
     
     public ICollection<Activity> Activities { get; set; }
 
-    [NotMapped]
-    public ICalendar Calendar { get; private set; }
+    [NotMapped] public ICalendar Calendar { get; private set; } = new Calendar.Calendar();
 
     public void FillCalendar(ICalendar calendar) => Calendar = calendar;
 

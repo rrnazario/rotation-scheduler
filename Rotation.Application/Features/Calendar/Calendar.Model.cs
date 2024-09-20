@@ -19,7 +19,7 @@ public record Calendar
         {
             var day = Days.FirstOrDefault(d => d.Date.Date == durationDay.Date);
 
-            result.Add(day ?? new CalendarDay(durationDay.Date, false));
+            result.Add(day ?? new CalendarDay(durationDay.Date, true));
         }
 
         return new CalendarAvailability(result);

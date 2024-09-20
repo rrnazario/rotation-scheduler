@@ -15,17 +15,19 @@ public interface IActivity : IAggregation
 }
 
 public record ActivityResume(
-    IUser? Main,
-    IUser? Replacer,
+    string MainName,
+    string MainEmail,
+    string? ReplacerName,
+    string? ReplacerEmail,
     DateTime CurrentBegin,
     DateTime CurrentEnd,
-    string Name,
+    string ActivityName,
     IUser[] UnavailableUsers)
 {
     public override string ToString()
-        => $"Activity '{Name}'\n" +
-           $"In Charge: {Main?.Name} ({Main?.Email})\n" +
-           $"Replacer: {Replacer?.Name} ({Replacer?.Email})\n" +
+        => $"Activity '{ActivityName}'\n" +
            $"From: {CurrentBegin:dd/MM/yyyy HH:mm}\n" +
-           $"To: {CurrentEnd:dd/MM/yyyy HH:mm}";
+           $"To: {CurrentEnd:dd/MM/yyyy HH:mm}\n" +
+           $"In Charge: {MainName} ({MainEmail})\n" +
+           $"Replacer: {ReplacerName} ({ReplacerEmail})";
 }
