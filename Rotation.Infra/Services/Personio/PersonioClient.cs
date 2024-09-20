@@ -34,7 +34,7 @@ public class PersonioClient
         return PersonioEmployeeResponse.Parse(personioResponse!);
     }
 
-    public async Task<PersonioTimeOffResponse> GetTimeOffAsync(GetTimeOffAsyncRequest request,
+    public async Task<PersonioTimeOffResponse[]> GetTimeOffAsync(GetTimeOffAsyncRequest request,
         CancellationToken cancellationToken)
     {
         var personioResponse = await PerformRequest<PersonioResponse<dynamic>>(HttpMethod.Get,

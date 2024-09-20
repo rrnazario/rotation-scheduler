@@ -17,7 +17,6 @@ public class Activity : IActivity
         Name = name;
         Description = description;
         Duration = duration;
-        Id = 5;
     }
 
     public string Name { get; private set; }
@@ -34,6 +33,8 @@ public class Activity : IActivity
 
     public bool TryAddUser(IUser user)
     {
+        Users ??= new List<User>();
+        
         if (Users.Any(u => u.Email == user.Email))
         {
             return false;

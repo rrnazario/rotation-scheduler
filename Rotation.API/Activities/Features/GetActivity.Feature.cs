@@ -2,10 +2,13 @@
 using Carter.OpenApi;
 using FluentValidation;
 using MediatR;
+using Rotation.Application.Features.Activities;
 using Rotation.Domain.Activities;
 using Rotation.Domain.Exceptions;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
+using Rotation.Infra.Services.Personio;
+using Rotation.Infra.Services.Personio.Models;
 using static Rotation.API.Activities.Features.GetNextUserOnRotation;
 
 namespace Rotation.API.Activities.Features;
@@ -14,10 +17,12 @@ public static class GetNextUserOnRotation
 {
     internal record GetActivityQuery(int ActivityId)
         : IRequest<ActivityResume>;
+
     class Validator
-    : AbstractValidator<GetActivityQuery>
+        : AbstractValidator<GetActivityQuery>
     {
         private readonly IServiceProvider _serviceProvider;
+
         public Validator(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -34,22 +39,25 @@ public static class GetNextUserOnRotation
         private readonly IActivityRepository _repository;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPersonioClient _personioClient;
 
         public Handler(
             IMediator metiator,
             IActivityRepository repository,
             IUnitOfWork unitOfWork,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IPersonioClient personioClient)
         {
             _mediator = metiator;
             _repository = repository;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
+            _personioClient = personioClient;
         }
 
         public async Task<ActivityResume> Handle(GetActivityQuery request, CancellationToken cancellationToken)
         {
-            var activity = await _repository.GetByIdAsync(request.ActivityId, cancellationToken);
+            var activity = (Activity) await _repository.GetByIdAsync(request.ActivityId, cancellationToken);
             if (activity is null)
             {
                 throw new EntityNotFoundException(nameof(activity));
@@ -61,6 +69,28 @@ public static class GetNextUserOnRotation
                 activity.TryAddUser(user);
             }
 
+            return await GetActivityResumeAsync(activity, cancellationToken);
+        }
+
+        private async Task<ActivityResume> GetActivityResumeAsync(Activity activity,
+            CancellationToken cancellationToken)
+        {
+            var begin = activity.Duration.CurrentBegin.Date;
+            var end = activity.Duration.CurrentEnd().Date;
+
+            var request =
+                new PersonioTimeOffModels.GetTimeOffAsyncRequest(begin, end,
+                    activity.Users.Select(s => s.ExternalId).ToArray());
+            var timeoffs = (await _personioClient.GetTimeOffAsync(request, cancellationToken))
+                .ToDictionary(d => d.EmployeeEmail);
+
+            foreach (var email in timeoffs.Keys)
+            {
+                var user = activity.Users.FirstOrDefault(f => f.Email == email);
+                //var calendar = new Calendar()
+                //user.FillCalendar();
+            }
+
             return activity.GetActivityResume();
         }
     }
@@ -69,12 +99,12 @@ public static class GetNextUserOnRotation
 public class GetActivityModule : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
-    => app
+        => app
             .MapGet(
-            ActivityConstants.Route + "/{activityId}",
-            async (ISender sender, int activityId) 
-               => await sender.Send(new GetActivityQuery(activityId)))
-           .IncludeInOpenApi()
-           .Produces<ActivityResume>()
-           .ProducesProblem(StatusCodes.Status400BadRequest);
+                ActivityConstants.Route + "/{activityId}",
+                async (ISender sender, int activityId)
+                    => await sender.Send(new GetActivityQuery(activityId)))
+            .IncludeInOpenApi()
+            .Produces<ActivityResume>()
+            .ProducesProblem(StatusCodes.Status400BadRequest);
 }

@@ -3,10 +3,7 @@
 namespace Rotation.Domain.Calendars;
 
 public interface ICalendar
-    : IAggregation
 {
-    public int UserId { get; }
-
     public IEnumerable<CalendarDay> Days { get; }
 
     void FillDays(IEnumerable<CalendarDay> days);

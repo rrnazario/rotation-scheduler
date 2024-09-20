@@ -94,9 +94,9 @@ public class PersonioServiceTimeOffTests
 
         var result = PersonioTimeOffResponse.Parse(personioResponse);
 
-        result.Should().NotBeNull();
-        result.Id.Should().Be(personioResponse.data[0].attributes["id"]);
-        result.EmployeeEmail.Should()
+        result.Should().NotBeEmpty();
+        result.First().Id.Should().Be(personioResponse.data[0].attributes["id"]);
+        result.First().EmployeeEmail.Should()
             .Be(personioResponse.data[0].attributes["employee"].Data[0].Attributes["email"].Value);
     }
 }

@@ -1,32 +1,34 @@
-﻿using Rotation.Application.Features.Activities;
+﻿using Microsoft.EntityFrameworkCore;
+using Rotation.Application.Features.Activities;
 using Rotation.Domain.Activities;
-using Rotation.Domain.SeedWork;
+using Rotation.Infra.Persistence;
 
 namespace Rotation.Infra.Activities;
 
 internal class ActivityRepository
     : IActivityRepository
 {
-    private static readonly List<IActivity> entities = new()
+    private readonly DatabaseContext _databaseContext;
+
+    public ActivityRepository(DatabaseContext databaseContext)
     {
-        new Activity("On Duty", "On duty call", new Duration(4, DurationType.Days, DateTime.UtcNow.Date))
-    };
-
-    public Task<int> AddAsync(IActivity entity, CancellationToken cancellationToken = default)
-    {
-        entities.Add(entity);
-
-
-        return Task.FromResult(entity.Id);
+        _databaseContext = databaseContext;
     }
 
-    public Task<IEnumerable<IActivity>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IActivity> AddAsync(IActivity entity, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(entities.AsEnumerable());
+        var activity = await _databaseContext.Set<Activity>().AddAsync(entity as Activity, cancellationToken);
+
+        return activity.Entity;
     }
 
-    public Task<IActivity?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<IActivity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(entities.Find(a => a.Id == id));
+        return await _databaseContext.Set<Activity>().Include(u => u.Users).ToListAsync(cancellationToken);
+    }
+
+    public async Task<IActivity?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _databaseContext.Set<Activity>().Include(u => u.Users).Where(w => w.Id == id).FirstOrDefaultAsync(cancellationToken);
     }
 }

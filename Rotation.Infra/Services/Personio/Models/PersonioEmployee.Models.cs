@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using static Rotation.Infra.Services.Personio.Models.PersonioModels;
 
 namespace Rotation.Infra.Services.Personio.Models;
@@ -14,8 +15,7 @@ public static class PersonioEmployeeModels
         public string label { get; set; }
         public string type { get; set; }
 
-        [JsonPropertyName("universal_id")]
-        public string universalId { get; set; }
+        [JsonPropertyName("universal_id")] public string universalId { get; set; }
     }
 
     public class PersonioEmployeeResponse()
@@ -23,15 +23,31 @@ public static class PersonioEmployeeModels
         public string id { get; set; }
         public string email { get; set; }
 
+        public static PersonioEmployeeResponse Parse(string personioResponse)
+        {
+            var personioResponseData =
+                JsonSerializer.Deserialize<PersonioResponseData<PersonioEmployeeAttribute>>(personioResponse);
+
+            return GenerateInstance(personioResponseData);
+        }
+
         public static PersonioEmployeeResponse Parse(PersonioResponse<PersonioEmployeeAttribute> personioResponse)
+        {
+            foreach (var personioResponseData in personioResponse.data)
+            {
+                return GenerateInstance(personioResponseData);
+            }
+
+            return default!;
+        }
+
+        private static PersonioEmployeeResponse GenerateInstance(
+            PersonioResponseData<PersonioEmployeeAttribute> personioResponseData)
         {
             var instance = PersonioResponseHelper.CreateInstance<PersonioEmployeeResponse>();
 
-            foreach (var personioResponseData in personioResponse.data)
-            {
-                instance.id = personioResponseData.attributes[nameof(instance.id).ToLower()].value.ToString();
-                instance.email = personioResponseData.attributes[nameof(instance.email).ToLower()].value.ToString();
-            }
+            instance.id = personioResponseData.attributes[nameof(instance.id).ToLower()].value.ToString();
+            instance.email = personioResponseData.attributes[nameof(instance.email).ToLower()].value.ToString();
 
             return instance;
         }

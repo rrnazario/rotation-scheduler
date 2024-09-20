@@ -11,6 +11,7 @@ using Rotation.Infra.Users;
 using SlackNet.AspNetCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Rotation.Infra;
 
@@ -34,10 +35,14 @@ public static class InfraDIExtensions
         builder.Services.AddDbContext<DatabaseContext>(ctx =>
         {
             var options = builder.Configuration
-                    .GetSection("Database")
-                    .Get<EFPersistenceOptions>()!;
+                .GetSection("Database")
+                .Get<EFPersistenceOptions>()!;
 
-            ctx.UseNpgsql(options.ConnectionString, action =>
+            var dataSource = new NpgsqlDataSourceBuilder(options.ConnectionString)
+                .EnableDynamicJson()
+                .Build();
+
+            ctx.UseNpgsql(dataSource, action =>
             {
                 action.EnableRetryOnFailure(options.MaxRetryCount);
                 action.CommandTimeout(options.CommandTimeout);
