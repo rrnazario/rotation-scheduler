@@ -22,11 +22,10 @@ public class Activity : IActivity
     public string Name { get; private set; }
     public string Description { get; private set; }
     public Duration Duration { get; private set; }
-
+    public ActivityResume? Resume { get; private set; }
     public ICollection<User> Users { get; set; }
 
-    [NotMapped]
-    ICollection<IUser> IActivity.Users => Users as ICollection<IUser>;
+    [NotMapped] ICollection<IUser> IActivity.Users => Users as ICollection<IUser>;
 
     public int Id { get; private set; }
 
@@ -34,7 +33,7 @@ public class Activity : IActivity
     public bool TryAddUser(IUser user)
     {
         Users ??= new List<User>();
-        
+
         if (Users.Any(u => u.Email == user.Email))
         {
             return false;
@@ -47,6 +46,9 @@ public class Activity : IActivity
 
     public ActivityResume GetActivityResume()
     {
+        if (Resume is not null)
+            return Resume;
+
         IUser? main = default, replacer = default;
         var unavailableUsers = new List<IUser>();
         foreach (var user in Users)
@@ -74,23 +76,27 @@ public class Activity : IActivity
             unavailableUsers.Add(user);
         }
 
-        return new ActivityResume(main, replacer, Duration.CurrentBegin, Duration.CurrentEnd(), Name,
+        Resume = new ActivityResume(main.Name, main.Email, replacer.Name, replacer.Email, Duration.CurrentBegin,
+            Duration.CurrentEnd(), Name,
             unavailableUsers.ToArray());
+
+        return Resume;
     }
 
     public void Rotate()
     {
         var resume = GetActivityResume();
 
-        MoveMainUserToEnd(resume.Main);
+        MoveMainUserToEnd(resume.MainEmail);
         MoveNotAvailableUsersTopList(resume.UnavailableUsers.ToList());
         Duration.SetNextBegin();
     }
 
-    private void MoveMainUserToEnd(IUser user)
+    private void MoveMainUserToEnd(string email)
     {
         var currentUsers = Users.ToList();
-        currentUsers.Remove((User)user!);
+        var user = currentUsers.Find(e => e.Email == email);
+        currentUsers.Remove(user!);
 
         currentUsers.Append(user!);
     }

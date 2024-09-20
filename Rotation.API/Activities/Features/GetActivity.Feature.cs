@@ -3,7 +3,9 @@ using Carter.OpenApi;
 using FluentValidation;
 using MediatR;
 using Rotation.Application.Features.Activities;
+using Rotation.Application.Features.Calendar;
 using Rotation.Domain.Activities;
+using Rotation.Domain.Calendars;
 using Rotation.Domain.Exceptions;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
@@ -57,7 +59,7 @@ public static class GetNextUserOnRotation
 
         public async Task<ActivityResume> Handle(GetActivityQuery request, CancellationToken cancellationToken)
         {
-            var activity = (Activity) await _repository.GetByIdAsync(request.ActivityId, cancellationToken);
+            var activity = (Activity)await _repository.GetByIdAsync(request.ActivityId, cancellationToken);
             if (activity is null)
             {
                 throw new EntityNotFoundException(nameof(activity));
@@ -69,7 +71,9 @@ public static class GetNextUserOnRotation
                 activity.TryAddUser(user);
             }
 
-            return await GetActivityResumeAsync(activity, cancellationToken);
+            var resume = await GetActivityResumeAsync(activity, cancellationToken);
+
+            return resume;
         }
 
         private async Task<ActivityResume> GetActivityResumeAsync(Activity activity,
@@ -78,20 +82,44 @@ public static class GetNextUserOnRotation
             var begin = activity.Duration.CurrentBegin.Date;
             var end = activity.Duration.CurrentEnd().Date;
 
+            if (activity.Resume is not null && 
+                activity.Resume.CurrentBegin.Date == begin &&
+                activity.Resume.CurrentEnd.Date == end)
+            {
+                return activity.GetActivityResume();
+            }
+
             var request =
                 new PersonioTimeOffModels.GetTimeOffAsyncRequest(begin, end,
                     activity.Users.Select(s => s.ExternalId).ToArray());
             var timeoffs = (await _personioClient.GetTimeOffAsync(request, cancellationToken))
-                .ToDictionary(d => d.EmployeeEmail);
+                .GroupBy(d => d.EmployeeEmail)
+                .ToDictionary(d => d.Key, v => v.AsEnumerable().OrderBy(o => o.StartDate).ToArray());
 
             foreach (var email in timeoffs.Keys)
             {
                 var user = activity.Users.FirstOrDefault(f => f.Email == email);
-                //var calendar = new Calendar()
-                //user.FillCalendar();
+                if (user is null) continue;
+
+                var calendar = new Calendar();
+
+                var daysOff = timeoffs[email];
+
+                calendar.FillDays(
+                    activity.Duration.GetCurrentInterval().Select(s =>
+                    {
+                        var dayOff = daysOff.FirstOrDefault(f => f.StartDate.Date == s.Date);
+
+                        return new CalendarDay(s.Date, Available: dayOff is null);
+                    }).ToArray());
+
+                user.FillCalendar(calendar);
             }
 
-            return activity.GetActivityResume();
+            var resume = activity.GetActivityResume();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return resume;
         }
     }
 }
