@@ -5,6 +5,7 @@ using MediatR;
 using Rotation.Application.Features.Activities;
 using Rotation.Domain.Activities;
 using Rotation.Domain.SeedWork;
+using Rotation.Infra.Contracts;
 
 namespace Rotation.API.Activities.Features;
 
@@ -72,10 +73,16 @@ public static class AddActivity
     }
 }
 
-public class AddActivityModule : ICarterModule
+public class AddActivityModule 
+    : ICarterModule, IEndpointModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
-    => app
+        => InnerMap(app);
+    public void Map(IEndpointRouteBuilder routeBuilder)
+        => InnerMap(routeBuilder);
+
+    private void InnerMap(IEndpointRouteBuilder routeBuilder)
+            => routeBuilder
             .MapPost<AddActivity.AddActivityCommand>(
             ActivityConstants.Route,
             async (ISender sender, AddActivity.AddActivityCommand command) =>
@@ -87,4 +94,5 @@ public class AddActivityModule : ICarterModule
            .IncludeInOpenApi()
            .Produces<AddActivity.AddActivityResponse>(StatusCodes.Status201Created)
            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
+
 }

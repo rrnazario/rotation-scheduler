@@ -1,18 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rotation.Application.Features.Users;
 
 namespace Rotation.Infra.Users;
 
 public class UserMapping
-{
-    public static void Map(ModelBuilder modelBuilder)
+    : IEntityTypeConfiguration<User>
+{   
+    public void Configure(EntityTypeBuilder<User> builder)
     {
-        modelBuilder.Entity<User>(activity =>
-        {
-            activity.HasKey(x => x.Id);
-            activity.Property(x => x.Id).ValueGeneratedOnAdd();
-            
-            activity.Property(x => x.Email).IsRequired();
-        }); 
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
+
+        builder.Property(x => x.Email).IsRequired();
     }
 }

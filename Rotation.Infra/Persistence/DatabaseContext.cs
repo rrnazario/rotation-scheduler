@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Rotation.Infra.Activities;
-using Rotation.Infra.Users;
 
 namespace Rotation.Infra.Persistence;
 
@@ -11,8 +10,7 @@ internal class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        ActivityMapping.Map(modelBuilder);
-        UserMapping.Map(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ActivityMapping).Assembly);
 
         base.OnModelCreating(modelBuilder);
     }    

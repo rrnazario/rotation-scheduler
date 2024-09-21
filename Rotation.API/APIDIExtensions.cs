@@ -3,6 +3,7 @@ using Asp.Versioning;
 using Carter;
 using Carter.OpenApi;
 using Microsoft.OpenApi.Models;
+using Rotation.Infra.Contracts;
 
 namespace Rotation.API;
 
@@ -27,6 +28,8 @@ public static class APIDIExtensions
         });
 
         builder.Services.AddCarter();
+        //or
+        //builder.Services.AddModules();
 
         builder.Services.AddApiVersioning(options =>
         {
@@ -48,5 +51,7 @@ public static class APIDIExtensions
         }
 
         app.MapCarter();
+        //or
+        //app.MapEndpoints();
     }
 }
