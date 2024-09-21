@@ -6,6 +6,7 @@ using Rotation.Domain.Activities;
 using Rotation.Domain.Exceptions;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
+using Rotation.Infra.Contracts;
 using static Rotation.API.Activities.ActivityExceptions;
 using static Rotation.API.Activities.Features.AssignUsersToActivity;
 
@@ -46,7 +47,7 @@ public static class AssignUsersToActivity
         public Handler(
             IActivityRepository repository,
             IUnitOfWork unitOfWork,
-            IUserRepository userRepository, 
+            IUserRepository userRepository,
             ILogger<Handler> logger)
         {
             _activityRepository = repository;
@@ -86,9 +87,15 @@ public static class AssignUsersToActivity
     }
 }
 
-public class AssignUserToActivityModule : ICarterModule
+public class AssignUserToActivityModule
+    : ICarterModule, IEndpointModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
+        => InnerMap(app);
+    public void Map(IEndpointRouteBuilder routeBuilder) 
+        => InnerMap(routeBuilder);
+
+    private void InnerMap(IEndpointRouteBuilder app)
     => app
             .MapPut<AssignUsersToActivityCommand>(
             $"{ActivityConstants.Route}/user",

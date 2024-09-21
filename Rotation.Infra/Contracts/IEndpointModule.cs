@@ -44,8 +44,7 @@ public static class EndpointModuleExtensions
                 IsAbstract: false,
                 IsInterface: false
             } && t.IsAssignableTo(moduleType))
-            .Select(s => ServiceDescriptor.Transient(moduleType, s))
-            .ToArray();
+            .Select(s => ServiceDescriptor.Transient(moduleType, s));
 
         services.TryAddEnumerable(descriptors);
 

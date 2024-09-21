@@ -1,10 +1,6 @@
-﻿using Rotation.Domain.Calendars;
-using Rotation.Domain.SeedWork;
-
-namespace Rotation.Application.Features.Calendar;
+﻿namespace Rotation.Domain.SeedWork;
 
 public record Calendar
-    : ICalendar
 {
     public IEnumerable<CalendarDay> Days { get; private set; } = [];
 
@@ -24,4 +20,11 @@ public record Calendar
 
         return new CalendarAvailability(result);
     }
+}
+
+public record CalendarDay(DateTime Date, bool Available);
+
+public record CalendarAvailability(List<CalendarDay> Availability)
+{
+    public int AvailabilityPercentage => Availability.Count(v => v.Available) * 100 / Availability.Count;
 }

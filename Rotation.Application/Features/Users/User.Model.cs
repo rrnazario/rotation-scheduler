@@ -1,5 +1,4 @@
-﻿using Rotation.Domain.Calendars;
-using Rotation.Domain.SeedWork;
+﻿using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 using System.ComponentModel.DataAnnotations.Schema;
 using Rotation.Application.Features.Activities;
@@ -24,9 +23,9 @@ public class User : IUser
     
     public ICollection<Activity> Activities { get; set; }
 
-    [NotMapped] public ICalendar Calendar { get; private set; } = new Calendar.Calendar();
+    [NotMapped] public Calendar Calendar { get; private set; } = new Calendar();
 
-    public void FillCalendar(ICalendar calendar) => Calendar = calendar;
+    public void FillCalendar(Calendar calendar) => Calendar = calendar;
 
     public CalendarAvailability GetAvailability(Duration duration) => Calendar.GetAvailability(duration);
 }

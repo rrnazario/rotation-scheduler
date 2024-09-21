@@ -1,5 +1,4 @@
-﻿using Rotation.Domain.Calendars;
-using Rotation.Domain.SeedWork;
+﻿using Rotation.Domain.SeedWork;
 
 namespace Rotation.Domain.Users;
 
@@ -8,9 +7,9 @@ public interface IUser : IAggregation
     string Name { get; }
     string Email { get; }
     string ExternalId { get; set; }
-    ICalendar Calendar { get; }
+    Calendar Calendar { get; }
 
-    void FillCalendar(ICalendar calendar);
+    void FillCalendar(Calendar calendar);
 
     CalendarAvailability GetAvailability(Duration date);
 }
