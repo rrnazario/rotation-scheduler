@@ -1,8 +1,7 @@
-﻿using Carter;
-using Carter.OpenApi;
-using MediatR;
+﻿using MediatR;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
+using Rotation.Infra.Contracts;
 using static Rotation.API.Users.Features.GetAllUsers;
 
 namespace Rotation.API.Users.Features;
@@ -36,9 +35,9 @@ public static class GetAllUsers
     }
 }
 
-public class GetAllUsersModule : ICarterModule
+public class GetAllUsersModule : IEndpointModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public void Map(IEndpointRouteBuilder app)
     => app
             .MapGet(
             UserConstants.Route,
@@ -46,6 +45,5 @@ public class GetAllUsersModule : ICarterModule
             {
                 return await sender.Send(new GetAllUsersQuery());
             })
-           .IncludeInOpenApi()
            .Produces<GetUsersResponse>(StatusCodes.Status200OK);
 }

@@ -1,8 +1,7 @@
-﻿using Carter;
-using Carter.OpenApi;
-using MediatR;
+﻿using MediatR;
 using Rotation.Domain.Activities;
 using Rotation.Domain.SeedWork;
+using Rotation.Infra.Contracts;
 using static Rotation.API.Activities.Features.GetAllActivities;
 
 namespace Rotation.API.Activities.Features;
@@ -36,9 +35,9 @@ public static class GetAllActivities
     }
 }
 
-public class GetAllActivitiesModule : ICarterModule
+public class GetAllActivitiesModule : IEndpointModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public void Map(IEndpointRouteBuilder app)
     => app
             .MapGet(
             ActivityConstants.Route,
@@ -46,6 +45,5 @@ public class GetAllActivitiesModule : ICarterModule
             {
                 return await sender.Send(new GetAllActivitiesQuery());
             })
-           .IncludeInOpenApi()
            .Produces<GetAllActivitiesResponse>(StatusCodes.Status200OK);
 }

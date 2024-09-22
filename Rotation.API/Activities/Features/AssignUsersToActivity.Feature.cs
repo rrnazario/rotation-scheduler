@@ -1,6 +1,4 @@
-﻿using Carter;
-using Carter.OpenApi;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Rotation.Domain.Activities;
 using Rotation.Domain.Exceptions;
@@ -88,16 +86,11 @@ public static class AssignUsersToActivity
 }
 
 public class AssignUserToActivityModule
-    : ICarterModule, IEndpointModule
+    : IEndpointModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
-        => InnerMap(app);
     public void Map(IEndpointRouteBuilder routeBuilder) 
-        => InnerMap(routeBuilder);
-
-    private void InnerMap(IEndpointRouteBuilder app)
-    => app
-            .MapPut<AssignUsersToActivityCommand>(
+        => routeBuilder
+            .MapPut(
             $"{ActivityConstants.Route}/user",
             async (ISender sender, AssignUsersToActivityCommand command) =>
             {
@@ -117,7 +110,6 @@ public class AssignUserToActivityModule
 
                 return Results.NoContent();
             })
-           .IncludeInOpenApi()
            .Produces(StatusCodes.Status204NoContent)
            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
            .ProducesProblem(StatusCodes.Status400BadRequest);

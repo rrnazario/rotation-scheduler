@@ -13,13 +13,6 @@ public interface IEndpointModule
 
 public static class EndpointModuleExtensions
 {
-    public static IServiceCollection AddEndpoints(this IServiceCollection services)
-    {
-        services.AddEndpoints(Assembly.GetExecutingAssembly());
-
-        return services;
-    }
-
     public static IApplicationBuilder MapEndpoints(
         this WebApplication app, 
         RouteGroupBuilder? routeGroupBuilder = null)

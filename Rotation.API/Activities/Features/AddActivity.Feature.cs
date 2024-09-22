@@ -1,6 +1,4 @@
-﻿using Carter;
-using Carter.OpenApi;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Rotation.Application.Features.Activities;
 using Rotation.Domain.Activities;
@@ -74,16 +72,11 @@ public static class AddActivity
 }
 
 public class AddActivityModule 
-    : ICarterModule, IEndpointModule
+    : IEndpointModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
-        => InnerMap(app);
     public void Map(IEndpointRouteBuilder routeBuilder)
-        => InnerMap(routeBuilder);
-
-    private void InnerMap(IEndpointRouteBuilder routeBuilder)
             => routeBuilder
-            .MapPost<AddActivity.AddActivityCommand>(
+            .MapPost(
             ActivityConstants.Route,
             async (ISender sender, AddActivity.AddActivityCommand command) =>
             {
@@ -91,7 +84,6 @@ public class AddActivityModule
 
                 return Results.Created(ActivityConstants.Route, response);
             })
-           .IncludeInOpenApi()
            .Produces<AddActivity.AddActivityResponse>(StatusCodes.Status201Created)
            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 

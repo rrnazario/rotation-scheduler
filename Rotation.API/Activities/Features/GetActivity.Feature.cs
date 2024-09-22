@@ -1,14 +1,11 @@
-﻿using Carter;
-using Carter.OpenApi;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Rotation.Application.Features.Activities;
-using Rotation.Application.Features.Calendar;
 using Rotation.Domain.Activities;
-using Rotation.Domain.Calendars;
 using Rotation.Domain.Exceptions;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
+using Rotation.Infra.Contracts;
 using Rotation.Infra.Services.Personio;
 using Rotation.Infra.Services.Personio.Models;
 using static Rotation.API.Activities.Features.GetNextUserOnRotation;
@@ -124,15 +121,14 @@ public static class GetNextUserOnRotation
     }
 }
 
-public class GetActivityModule : ICarterModule
+public class GetActivityModule : IEndpointModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public void Map(IEndpointRouteBuilder app)
         => app
             .MapGet(
                 ActivityConstants.Route + "/{activityId}",
                 async (ISender sender, int activityId)
                     => await sender.Send(new GetActivityQuery(activityId)))
-            .IncludeInOpenApi()
             .Produces<ActivityResume>()
             .ProducesProblem(StatusCodes.Status400BadRequest);
 }

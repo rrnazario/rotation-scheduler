@@ -1,10 +1,9 @@
-﻿using Carter;
-using Carter.OpenApi;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Rotation.Application.Features.Users;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
+using Rotation.Infra.Contracts;
 using Rotation.Infra.Services.Personio;
 
 namespace Rotation.API.Users.Features;
@@ -95,11 +94,10 @@ public static class AddUser
     }
 }
 
-public class AddUserModule : ICarterModule
+public class AddUserModule : IEndpointModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
-        => app
-            .MapPost<AddUser.AddUserCommand>(
+    public void Map(IEndpointRouteBuilder app)
+        => app.MapPost(
                 UserConstants.Route,
                 async (ISender sender, AddUser.AddUserCommand command) =>
                 {
@@ -107,7 +105,6 @@ public class AddUserModule : ICarterModule
 
                     return Results.Created(UserConstants.Route, response);
                 })
-            .IncludeInOpenApi()
             .Produces<AddUser.AddUserResponse>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 }

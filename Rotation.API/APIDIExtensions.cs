@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Asp.Versioning;
-using Carter;
-using Carter.OpenApi;
+using FluentValidation;
 using Microsoft.OpenApi.Models;
 using Rotation.Infra.Contracts;
 
@@ -14,6 +13,8 @@ public static class APIDIExtensions
     /// </summary>
     public static void AddAPI(this WebApplicationBuilder builder)
     {
+        var currentAssembly = Assembly.GetExecutingAssembly();
+        
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo
@@ -22,14 +23,9 @@ public static class APIDIExtensions
                 Version = "v1",
                 Title = "Rotation API"
             });
-
-            options.DocInclusionPredicate((_, description) =>
-                    description.ActionDescriptor.EndpointMetadata.Any(_ => _ is IIncludeOpenApi));
         });
 
-        builder.Services.AddCarter();
-        //or
-        //builder.Services.AddModules();
+        builder.Services.AddEndpoints(currentAssembly);
 
         builder.Services.AddApiVersioning(options =>
         {
@@ -39,7 +35,8 @@ public static class APIDIExtensions
             options.ApiVersionReader = new HeaderApiVersionReader("X-Api-Version");
         });
         
-        builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(currentAssembly));
+        builder.Services.AddValidatorsFromAssembly(currentAssembly);
     }
 
     public static void UseAPI(this WebApplication app)
@@ -50,8 +47,6 @@ public static class APIDIExtensions
             app.UseSwaggerUI();
         }
 
-        app.MapCarter();
-        //or
-        //app.MapEndpoints();
+        app.MapEndpoints();
     }
 }
