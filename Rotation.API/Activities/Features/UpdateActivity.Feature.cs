@@ -2,23 +2,26 @@
 using MediatR;
 using Rotation.Application.Features.Activities;
 using Rotation.Domain.Activities;
+using Rotation.Domain.Exceptions;
 using Rotation.Domain.SeedWork;
 using Rotation.Infra.Contracts;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Rotation.API.Activities.Features;
 
-public static class AddActivity
+public static class UpdateActivity
 {
-    internal record AddActivityCommand(
-        string Name,
-        string Description,
-        Duration Duration)
-        : IRequest<AddActivityResponse>;
-
-    internal record AddActivityResponse(int Id);
+    internal record UpdateActivityCommand(
+        string? Name = null,
+        string? Description = null,
+        Duration? Duration = null)
+        : IRequest
+    {
+        [NotMapped] public int ActivityId { get; set; }
+    }
 
     class Validator
-    : AbstractValidator<AddActivityCommand>
+    : AbstractValidator<UpdateActivityCommand>
     {
         private readonly IServiceProvider _serviceProvider;
         public Validator(IServiceProvider serviceProvider)
@@ -39,7 +42,7 @@ public static class AddActivity
         }
     }
 
-    record Handler : IRequestHandler<AddActivityCommand, AddActivityResponse>
+    record Handler : IRequestHandler<UpdateActivityCommand>
     {
         private readonly IActivityRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
@@ -52,33 +55,38 @@ public static class AddActivity
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<AddActivityResponse> Handle(AddActivityCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
         {
-            var activity = new Activity(request.Name, request.Description, request.Duration);
+            var activity = (Activity)await _repository.GetByIdAsync(request.ActivityId, cancellationToken);
+            if (activity is null)
+            {
+                throw new EntityNotFoundException(nameof(activity));
+            }
 
-            var newActivity = await _repository.AddAsync(activity, cancellationToken);
+            var updated = activity.TryUpdate(request.Name, request.Description, request.Duration);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return new AddActivityResponse(newActivity.Id);
+            if (updated)
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
 }
 
-public class AddActivityModule 
+public class UpdateActivityModule 
     : IEndpointModule
 {
     public void Map(IEndpointRouteBuilder routeBuilder)
             => routeBuilder
-            .MapPost(
-            ActivityConstants.Route,
-            async (ISender sender, AddActivity.AddActivityCommand command) =>
+            .MapPut(
+            ActivityConstants.Route + "/{activityId}",
+            async (ISender sender, int activityId, UpdateActivity.UpdateActivityCommand command) =>
             {
-                var response = await sender.Send(command);
+                command.ActivityId = activityId;
 
-                return Results.Created(ActivityConstants.Route, response);
+                await sender.Send(command);
+
+                return Results.NoContent();
             })
-           .Produces<AddActivity.AddActivityResponse>(StatusCodes.Status201Created)
+           .Produces(StatusCodes.Status204NoContent)
            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
 }

@@ -5,6 +5,7 @@ using Rotation.Domain.Exceptions;
 using Rotation.Domain.SeedWork;
 using Rotation.Domain.Users;
 using Rotation.Infra.Contracts;
+using System.ComponentModel.DataAnnotations.Schema;
 using static Rotation.API.Activities.ActivityExceptions;
 using static Rotation.API.Activities.Features.AssignUsersToActivity;
 
@@ -13,9 +14,11 @@ namespace Rotation.API.Activities.Features;
 public static class AssignUsersToActivity
 {
     internal record AssignUsersToActivityCommand(
-        int ActivityId,
         string[] UserEmails)
-        : IRequest;
+        : IRequest
+    {
+        [NotMapped] public int ActivityId { get; set; }
+    }
 
     class Validator
     : AbstractValidator<AssignUsersToActivityCommand>
@@ -28,10 +31,6 @@ public static class AssignUsersToActivity
             RuleFor(_ => _.UserEmails)
                 .NotEmpty()
                 .WithMessage("UserEmails must have a value");
-
-            RuleFor(_ => _.ActivityId)
-                .NotEmpty()
-                .WithMessage("ActivityId must have a value");
         }
     }
 
@@ -91,11 +90,13 @@ public class AssignUserToActivityModule
     public void Map(IEndpointRouteBuilder routeBuilder) 
         => routeBuilder
             .MapPut(
-            $"{ActivityConstants.Route}/user",
-            async (ISender sender, AssignUsersToActivityCommand command) =>
+            ActivityConstants.Route + "/{activityId}/user",
+            async (ISender sender, int activityId, AssignUsersToActivityCommand command) =>
             {
                 try
                 {
+                    command.ActivityId = activityId;
+
                     await sender.Send(command);
                 }
                 catch (EntityNotFoundException e)

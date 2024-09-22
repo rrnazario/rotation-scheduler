@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using Rotation.Domain.Activities;
+using Rotation.Application.Features.Activities;
 
 #nullable disable
 

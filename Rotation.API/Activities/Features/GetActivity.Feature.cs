@@ -83,7 +83,7 @@ public static class GetNextUserOnRotation
                 activity.Resume.CurrentBegin.Date == begin &&
                 activity.Resume.CurrentEnd.Date == end)
             {
-                return activity.GetActivityResume();
+                return (ActivityResume) activity.GetActivityResume();
             }
 
             var request =
@@ -116,7 +116,7 @@ public static class GetNextUserOnRotation
             var resume = activity.GetActivityResume();
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return resume;
+            return (ActivityResume) resume;
         }
     }
 }

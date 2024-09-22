@@ -44,7 +44,10 @@ public class Activity : IActivity
         return true;
     }
 
-    public ActivityResume GetActivityResume()
+    public IActivityResume GetActivityResume() 
+        => InternalGetActivityResume();
+
+    private ActivityResume InternalGetActivityResume()
     {
         if (Resume is not null)
             return Resume;
@@ -76,7 +79,7 @@ public class Activity : IActivity
             unavailableUsers.Add(user);
         }
 
-        Resume = new ActivityResume(main.Name, main.Email, replacer.Name, replacer.Email, Duration.CurrentBegin,
+        Resume = new ActivityResume(main?.Name ?? "None", main?.Email ?? string.Empty, replacer?.Name ?? "None", replacer?.Email, Duration.CurrentBegin,
             Duration.CurrentEnd(), Name,
             unavailableUsers.ToArray());
 
@@ -85,11 +88,36 @@ public class Activity : IActivity
 
     public void Rotate()
     {
-        var resume = GetActivityResume();
+        var resume = InternalGetActivityResume();
 
         MoveMainUserToEnd(resume.MainEmail);
         MoveNotAvailableUsersTopList(resume.UnavailableUsers.ToList());
         Duration.SetNextBegin();
+    }
+
+    public bool TryUpdate(string? name, string? description, Duration? duration)
+    {
+        var updated = false;
+
+        if (!string.IsNullOrEmpty(name) && !Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Name = name;
+            updated = true;
+        }
+
+        if (!string.IsNullOrEmpty(description) &&  !Description.Equals(description, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Description = description;
+            updated = true;
+        }
+
+        if (duration is not null && duration.IsValid() && !Duration.Equals(duration))
+        {
+            Duration = duration;
+            updated = true;
+        }
+
+        return updated;
     }
 
     private void MoveMainUserToEnd(string email)
@@ -116,4 +144,22 @@ public class Activity : IActivity
 
         Users = currentUsers;
     }
+}
+
+public record ActivityResume(
+    string MainName,
+    string MainEmail,
+    string? ReplacerName,
+    string? ReplacerEmail,
+    DateTime CurrentBegin,
+    DateTime CurrentEnd,
+    string ActivityName,
+    IUser[] UnavailableUsers) : IActivityResume
+{
+    public override string ToString()
+        => $"Activity '{ActivityName}'\n" +
+           $"From: {CurrentBegin:dd/MM/yyyy}\n" +
+           $"To: {CurrentEnd:dd/MM/yyyy}\n" +
+           $"In Charge: {MainName} ({MainEmail})\n" +
+           $"Replacer: {ReplacerName} ({ReplacerEmail})";
 }
