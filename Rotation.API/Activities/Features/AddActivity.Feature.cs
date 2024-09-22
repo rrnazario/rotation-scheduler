@@ -12,7 +12,8 @@ public static class AddActivity
     internal record AddActivityCommand(
         string Name,
         string Description,
-        Duration Duration)
+        string Duration,
+        DateTime DateBegin)
         : IRequest<AddActivityResponse>;
 
     internal record AddActivityResponse(int Id);
@@ -32,10 +33,6 @@ public static class AddActivity
             RuleFor(_ => _.Description)
                 .NotEmpty()
                 .WithMessage("Description must have a value");
-
-            RuleFor(_ => _.Duration)
-                .Must(d => d.IsValid())
-                .WithMessage("Duration must have a valid value");
         }
     }
 
@@ -54,7 +51,9 @@ public static class AddActivity
 
         public async Task<AddActivityResponse> Handle(AddActivityCommand request, CancellationToken cancellationToken)
         {
-            var activity = new Activity(request.Name, request.Description, request.Duration);
+            var duration = Duration.Parse(request.Duration, request.DateBegin);
+
+            var activity = new Activity(request.Name, request.Description, duration);
 
             var newActivity = await _repository.AddAsync(activity, cancellationToken);
 
@@ -65,7 +64,7 @@ public static class AddActivity
     }
 }
 
-public class AddActivityModule 
+public class AddActivityModule
     : IEndpointModule
 {
     public void Map(IEndpointRouteBuilder routeBuilder)

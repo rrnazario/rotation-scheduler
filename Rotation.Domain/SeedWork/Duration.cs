@@ -16,6 +16,26 @@ public record Duration
         Begin = CurrentBegin = begin;
     }
 
+    /// <summary>
+    /// Parse from string + Date
+    /// </summary>
+    /// <param name="duration">e.g. "2 Weeks", "7 Days"</param>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static Duration Parse(string duration, DateTime dateTime)
+    {
+        var split = duration.Split(' ');
+
+        if (!int.TryParse(split[0], out var amount))
+            throw new ArgumentException("Duration is not in a good shape");
+
+        if (!Enum.TryParse<DurationType>(split[1], out var durationType))
+            throw new ArgumentException("Duration is not in a good shape");
+
+        return new Duration(amount, durationType, dateTime);
+    }
+
     public DateTime[] GetCurrentInterval()
     {
         var result = new List<DateTime>();
