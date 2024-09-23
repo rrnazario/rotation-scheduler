@@ -27,10 +27,8 @@ public record Duration
     {
         var split = duration.Split(' ');
 
-        if (!int.TryParse(split[0], out var amount))
-            throw new ArgumentException("Duration is not in a good shape");
-
-        if (!Enum.TryParse<DurationType>(split[1], out var durationType))
+        if (!int.TryParse(split[0], out var amount) ||
+            !Enum.TryParse<DurationType>(split[1], out var durationType))
             throw new ArgumentException("Duration is not in a good shape");
 
         return new Duration(amount, durationType, dateTime);

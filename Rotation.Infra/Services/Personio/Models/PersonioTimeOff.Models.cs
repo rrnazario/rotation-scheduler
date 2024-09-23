@@ -24,24 +24,28 @@ public static class PersonioTimeOffModels
 
             foreach (var personioResponseData in personioResponse.data)
             {
-                var instance = PersonioResponseHelper.CreateInstance<PersonioTimeOffResponse>();
 
                 int.TryParse(personioResponseData.attributes["id"].ToString(), out int id);
-                instance.Id = id;
-
                 DateTime.TryParse(personioResponseData.attributes["start_date"].ToString(), out DateTime startDate);
-                instance.StartDate = startDate;
-                
                 DateTime.TryParse(personioResponseData.attributes["end_date"].ToString(), out DateTime endDate);
-                instance.EndDate = endDate;
 
                 PersonioEmployeeModels.PersonioEmployeeResponse employee =
                     PersonioEmployeeModels.PersonioEmployeeResponse.Parse(personioResponseData.attributes["employee"].ToString());
 
-                instance.EmployeeEmail = employee.email;
-                instance.EmployeeId = employee.id;
-                
-                response.Add(instance);
+                var days = (endDate.Date - startDate.Date).TotalDays;
+
+                for (int i = 0; i <= days; i++)
+                {
+                    var instance = PersonioResponseHelper.CreateInstance<PersonioTimeOffResponse>();
+
+                    instance.Id = id;
+                    instance.StartDate = startDate.AddDays(i);
+                    instance.EndDate = instance.StartDate;
+                    instance.EmployeeEmail = employee.email;
+                    instance.EmployeeId = employee.id;
+
+                    response.Add(instance);
+                }
             }
 
             return response.ToArray();

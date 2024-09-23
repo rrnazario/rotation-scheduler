@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Rotation.Infra.Services.Personio.Models;
+using System.Text.Json;
 using static Rotation.Infra.Services.Personio.Models.PersonioModels;
 using static Rotation.Infra.Services.Personio.Models.PersonioTimeOffModels;
 
@@ -37,11 +38,8 @@ public class PersonioServiceTimeOffTests
                         },
                         {
                             "employee",
-                            new PersonioResponse<PersonioEmployeeModels.PersonioEmployeeAttribute>
-                            {
-                                data =
-                                [
-                                    new PersonioResponseData<PersonioEmployeeModels.PersonioEmployeeAttribute>
+                            JsonSerializer.Serialize(
+                            new PersonioResponseData<PersonioEmployeeModels.PersonioEmployeeAttribute>
                                     {
                                         attributes =
                                             new Dictionary<string, PersonioEmployeeModels.PersonioEmployeeAttribute>
@@ -68,24 +66,22 @@ public class PersonioServiceTimeOffTests
                                                     "first_name",
                                                     new PersonioEmployeeModels.PersonioEmployeeAttribute
                                                     {
-                                                        label = "email",
+                                                        label = "first_name",
                                                         type = "standard",
-                                                        value = "r@r.com"
+                                                        value = "first_name"
                                                     }
                                                 },
                                                 {
                                                     "last_name",
                                                     new PersonioEmployeeModels.PersonioEmployeeAttribute
                                                     {
-                                                        label = "email",
+                                                        label = "last_name",
                                                         type = "standard",
-                                                        value = "r@r.com"
+                                                        value = "last_name"
                                                     }
                                                 }
                                             }
-                                    }
-                                ]
-                            }
+                                    })
                         }
                     }
                 }
@@ -94,9 +90,7 @@ public class PersonioServiceTimeOffTests
 
         var result = PersonioTimeOffResponse.Parse(personioResponse);
 
-        result.Should().NotBeEmpty();
+        result.Should().HaveCount(4);
         result.First().Id.Should().Be(personioResponse.data[0].attributes["id"]);
-        result.First().EmployeeEmail.Should()
-            .Be(personioResponse.data[0].attributes["employee"].Data[0].Attributes["email"].Value);
     }
 }
