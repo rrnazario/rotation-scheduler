@@ -91,7 +91,7 @@ public static class GetNextUserOnRotation
                     activity.Users.Select(s => s.ExternalId).ToArray());
             var timeoffs = (await _personioClient.GetTimeOffAsync(request, cancellationToken))
                 .GroupBy(d => d.EmployeeEmail)
-                .ToDictionary(d => d.Key, v => v.AsEnumerable().OrderBy(o => o.StartDate).ToArray());
+                .ToDictionary(d => d.Key, v => v.AsEnumerable().ToArray());
 
             foreach (var email in timeoffs.Keys)
             {
@@ -105,9 +105,9 @@ public static class GetNextUserOnRotation
                 calendar.FillDays(
                     activity.Duration.GetCurrentInterval().Select(s =>
                     {
-                        var dayOff = daysOff.FirstOrDefault(f => f.StartDate.Date == s.Date);
+                        var isDayOff = daysOff.Any(f => f.StartDate.Date == s.Date);
 
-                        return new CalendarDay(s.Date, Available: dayOff is null);
+                        return new CalendarDay(s.Date, Available: !isDayOff);
                     }).ToArray());
 
                 user.FillCalendar(calendar);
